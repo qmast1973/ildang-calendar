@@ -54,7 +54,8 @@
     .week div{padding:0 0 6px;text-align:center;color:var(--muted);font-size:11px;font-weight:700}
     .week div:first-child{color:var(--red)}
     .week div:last-child{color:#3770ae}
-    .day{min-height:56px;border-top:1px solid var(--line);padding:4px 2px;cursor:pointer;position:relative}
+    .day{min-height:56px;border-top:1px solid var(--line);padding:4px 2px;cursor:pointer;position:relative;box-sizing:border-box}
+    .day.settled-date{border:2px solid #000!important;border-radius:6px}
     .day:hover{background:#f7faf7}
     .day.blank{cursor:default;background:transparent}
     .day.selected-date-cell{outline:3px solid var(--green)!important;outline-offset:-3px!important;border-radius:10px!important;z-index:5}
@@ -652,7 +653,9 @@ function render(){
     let key = iso(new Date(y, m, d));
     let rs = records.filter(r => r.date === key);
     let dow = (first + d - 1) % 7;
-    let cl = 'day ' + (dow===0 ? 'sun ' : dow===6 ? 'sat ' : '') + (key===iso(new Date()) ? 'today ' : '') + (key===selectedDate ? 'selected-date-cell ' : '');
+    const workRs = rs.filter(r => !(r.site === '휴무' || ((Number(r.units)||0) === 0 && (Number(r.rate)||0) === 0)));
+    const isSettled = workRs.length > 0 && workRs.every(r => r.paid === true);
+    let cl = 'day ' + (dow===0 ? 'sun ' : dow===6 ? 'sat ' : '') + (key===iso(new Date()) ? 'today ' : '') + (key===selectedDate ? 'selected-date-cell ' : '') + (isSettled ? 'settled-date ' : '');
     
     let entries = rs.slice(0,2).map(r => {
       let u = Number(r.units) || 0;
