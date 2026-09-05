@@ -208,6 +208,15 @@
     #pwaInstallBottom{display:none;width:100%;margin:12px 0 4px;padding:12px;border:0;border-radius:12px;background:var(--green-dark);color:#fff;font-size:14px;font-weight:800;cursor:pointer}
     .pwa-ready #pwaInstallBottom{display:block}
   </style>
+<style id="global-settings-style">
+:root{--app-font-scale:1}
+html{font-size:calc(16px * var(--app-font-scale))}
+body{font-size:1rem}
+</style>
+<style id="global-settings-zoom-style">
+html{--app-zoom:1}
+main.app{zoom:var(--app-zoom)}
+</style>
 </head>
 <body>
 
@@ -228,7 +237,7 @@
       <button class="btn" id="mainCompanyManageBtn">업체 관리</button>
       <button class="btn primary" id="exportBtn">내보내기</button>
     </div>
-  </header>
+  <button type="button" class="btn" id="settingsBtn" aria-label="설정" title="설정" style="font-size:20px;min-width:44px;">⚙️</button></header>
 
   <div class="layout">
     <!-- 달력 섹션 (좌우 스와이프 제스처 지원) -->
@@ -1242,15 +1251,13 @@ function openCompanyManage(){
           </div>
           <button type="button" class="company-manage-delete" data-del-preset="${p.id}">삭제</button>
         </div>
-        <div class="company-manage-actions">
-          <button type="button" class="company-edit" data-edit-company="${p.id}">수정</button>
-          <button type="button" class="company-manage-delete" data-del-preset="${p.id}">삭제</button>
-        </div>
-        <div class="company-manage-fields" data-company-fields="${p.id}" style="display:none;">
+        <div class="company-manage-fields">
           <input type="number" data-company-rate="${p.id}" value="${Number(p.rate||0)}" min="0" step="1000" placeholder="일당 단가(원)">
           <input type="tel" data-company-phone="${p.id}" value="${escapeHtml(p.phone||'')}" placeholder="전화번호">
           <input type="text" data-company-address="${p.id}" value="${escapeHtml(p.address||'')}" placeholder="업체 주소">
           <textarea data-company-memo="${p.id}" placeholder="업체 관련 메모 (담당자, 입금정보 등)">${escapeHtml(p.memo||'')}</textarea>
+        </div>
+        <div class="company-manage-actions">
           <button type="button" class="company-edit" data-save-company="${p.id}">정보 저장</button>
         </div>
       </div>`).join('')
@@ -1259,8 +1266,6 @@ function openCompanyManage(){
 }
 $('companyManageClose').onclick = () => $('companyManageSheet').classList.remove('open');
 document.addEventListener('click', e => {
-  const editBtn = e.target.closest('[data-edit-company]');
-  if(editBtn){ const id=editBtn.dataset.editCompany; const fields=document.querySelector(`[data-company-fields=\"${CSS.escape(id)}\"]`); if(fields){ fields.style.display=fields.style.display==='none'?'grid':'none'; editBtn.textContent=fields.style.display==='none'?'수정':'취소'; } return; }
   const saveBtn = e.target.closest('[data-save-company]');
   if(saveBtn){
     const id = saveBtn.dataset.saveCompany;
@@ -1485,6 +1490,53 @@ calendarSection.addEventListener('touchend', e => {
 try {
   render();
 } catch(e) { console.error(e); }
+</script>
+<div class="sheet" id="settingsSheet">
+  <div class="sheet-box" style="position:relative;">
+    <div class="sheet-head-row"><h1 class="sheet-title" style="margin:0;">⚙️ 설정</h1></div>
+    <button type="button" class="btn" id="settingsCloseBtn" style="position:absolute;right:12px;top:12px;width:36px;height:36px;padding:0;font-size:22px;">×</button>
+    <div style="display:grid;gap:14px;">
+      <section style="border:1px solid #dce4de;border-radius:12px;padding:12px;">
+        <strong>전체 화면 글자 크기</strong>
+        <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px;">
+          <button type="button" class="btn" id="fontDownBtn">A−</button>
+          <strong id="fontSizeValue">100%</strong>
+          <button type="button" class="btn" id="fontUpBtn">A+</button>
+          <button type="button" class="btn" id="fontResetBtn">기본</button>
+        </div>
+      </section>
+      <section style="border:1px solid #dce4de;border-radius:12px;padding:12px;">
+        <strong>달력 표시</strong>
+        <label style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+          <input type="checkbox" id="settingPaidBorder" checked> 정산 완료 날짜 검은색 테두리
+        </label>
+      </section>
+    </div>
+  </div>
+</div><script id="global-settings-js">
+(function(){
+  const K="daily_calendar_settings_global_v1";
+  let st={font:1,border:true};
+  try{st=Object.assign(st,JSON.parse(localStorage.getItem(K)||"{}"));}catch(e){}
+  const $=id=>document.getElementById(id);
+  function save(){localStorage.setItem(K,JSON.stringify(st));}
+  function apply(){
+    document.documentElement.style.setProperty("--app-font-scale",String(st.font));
+    document.documentElement.style.setProperty("--app-zoom",String(st.font));
+    const app=document.querySelector("main.app");
+    if(app) app.style.zoom=String(st.font);
+    if($("fontSizeValue"))$("fontSizeValue").textContent=Math.round(st.font*100)+"%";
+    if($("settingPaidBorder"))$("settingPaidBorder").checked=st.border;
+  }
+  if($("settingsBtn"))$("settingsBtn").onclick=()=>{$("settingsSheet").classList.add("open");apply();};
+  if($("settingsCloseBtn"))$("settingsCloseBtn").onclick=()=>$("settingsSheet").classList.remove("open");
+  if($("settingsSheet"))$("settingsSheet").onclick=e=>{if(e.target===$("settingsSheet"))$("settingsSheet").classList.remove("open");};
+  if($("fontDownBtn"))$("fontDownBtn").onclick=()=>{st.font=Math.max(.8,Math.round((st.font-.05)*20)/20);save();apply();};
+  if($("fontUpBtn"))$("fontUpBtn").onclick=()=>{st.font=Math.min(1.3,Math.round((st.font+.05)*20)/20);save();apply();};
+  if($("fontResetBtn"))$("fontResetBtn").onclick=()=>{st.font=1;save();apply();};
+  if($("settingPaidBorder"))$("settingPaidBorder").onchange=e=>{st.border=e.target.checked;save();};
+  apply();
+})();
 </script>
 </body>
 </html>
