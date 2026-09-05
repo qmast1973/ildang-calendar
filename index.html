@@ -208,17 +208,13 @@
     #pwaInstallBottom{display:none;width:100%;margin:12px 0 4px;padding:12px;border:0;border-radius:12px;background:var(--green-dark);color:#fff;font-size:14px;font-weight:800;cursor:pointer}
     .pwa-ready #pwaInstallBottom{display:block}
   </style>
-<style id="global-settings-style">
-:root{--app-font-scale:1}
-html{font-size:calc(16px * var(--app-font-scale))}
-body{font-size:1rem}
-</style>
-<style id="global-settings-zoom-style">
-html{--app-zoom:1}
-main.app{zoom:var(--app-zoom)}
+
+<style id="settings-only-css">
+#settingsBtn{position:fixed;top:10px;right:10px;z-index:2100;width:44px;height:44px;border-radius:50%;font-size:20px;padding:0}
+@media(max-width:700px){#settingsBtn{top:calc(10px + env(safe-area-inset-top,0px));right:10px}}
 </style>
 </head>
-<body>
+<body><button type="button" class="btn" id="settingsBtn" aria-label="설정" title="설정">⚙️</button>
 
 <div id="fullscreenStart" aria-hidden="true">
   <div class="fs-card">
@@ -237,7 +233,7 @@ main.app{zoom:var(--app-zoom)}
       <button class="btn" id="mainCompanyManageBtn">업체 관리</button>
       <button class="btn primary" id="exportBtn">내보내기</button>
     </div>
-  <button type="button" class="btn" id="settingsBtn" aria-label="설정" title="설정" style="font-size:20px;min-width:44px;">⚙️</button></header>
+  </header>
 
   <div class="layout">
     <!-- 달력 섹션 (좌우 스와이프 제스처 지원) -->
@@ -1491,50 +1487,66 @@ try {
   render();
 } catch(e) { console.error(e); }
 </script>
+<!-- 설정 메뉴: 기존 기능은 변경하지 않고 메뉴만 연결 -->
 <div class="sheet" id="settingsSheet">
   <div class="sheet-box" style="position:relative;">
     <div class="sheet-head-row"><h1 class="sheet-title" style="margin:0;">⚙️ 설정</h1></div>
-    <button type="button" class="btn" id="settingsCloseBtn" style="position:absolute;right:12px;top:12px;width:36px;height:36px;padding:0;font-size:22px;">×</button>
-    <div style="display:grid;gap:14px;">
+    <button type="button" class="btn" id="settingsCloseBtn" style="position:absolute;top:12px;right:12px;width:36px;height:36px;padding:0;font-size:22px;">×</button>
+    <div style="display:grid;gap:12px;">
       <section style="border:1px solid #dce4de;border-radius:12px;padding:12px;">
-        <strong>전체 화면 글자 크기</strong>
-        <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px;">
+        <strong>화면 글자 크기</strong>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;">
           <button type="button" class="btn" id="fontDownBtn">A−</button>
-          <strong id="fontSizeValue">100%</strong>
+          <strong id="fontSizeValue">125%</strong>
           <button type="button" class="btn" id="fontUpBtn">A+</button>
-          <button type="button" class="btn" id="fontResetBtn">기본</button>
+          <button type="button" class="btn" id="fontResetBtn">기본 125%</button>
         </div>
       </section>
       <section style="border:1px solid #dce4de;border-radius:12px;padding:12px;">
-        <strong>달력 표시</strong>
-        <label style="display:flex;align-items:center;gap:8px;margin-top:10px;">
-          <input type="checkbox" id="settingPaidBorder" checked> 정산 완료 날짜 검은색 테두리
+        <strong>관리</strong>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">
+          <button type="button" class="btn" id="settingsCompanyBtn">업체 관리</button>
+          <button type="button" class="btn" id="settingsBackupBtn">백업 / 복원</button>
+          <button type="button" class="btn" id="settingsSettlementBtn">입금 정산 관리</button>
+          <button type="button" class="btn" id="settingsExportBtn">내보내기</button>
+        </div>
+      </section>
+      <section style="border:1px solid #dce4de;border-radius:12px;padding:12px;">
+        <label style="display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" id="settingPaidBorder" checked>
+          정산 완료 날짜 검은색 테두리
         </label>
       </section>
     </div>
   </div>
-</div><script id="global-settings-js">
+</div>
+
+<script id="settings-only-js">
 (function(){
-  const K="daily_calendar_settings_global_v1";
-  let st={font:1,border:true};
-  try{st=Object.assign(st,JSON.parse(localStorage.getItem(K)||"{}"));}catch(e){}
+  const KEY="ildang_settings_v3";
+  let st={font:1.25,border:true};
+  try{st=Object.assign(st,JSON.parse(localStorage.getItem(KEY)||"{}"));}catch(e){}
   const $=id=>document.getElementById(id);
-  function save(){localStorage.setItem(K,JSON.stringify(st));}
+  function save(){localStorage.setItem(KEY,JSON.stringify(st));}
+  function appRoot(){return document.querySelector("main.app") || document.querySelector(".app");}
   function apply(){
-    document.documentElement.style.setProperty("--app-font-scale",String(st.font));
-    document.documentElement.style.setProperty("--app-zoom",String(st.font));
-    const app=document.querySelector("main.app");
-    if(app) app.style.zoom=String(st.font);
-    if($("fontSizeValue"))$("fontSizeValue").textContent=Math.round(st.font*100)+"%";
-    if($("settingPaidBorder"))$("settingPaidBorder").checked=st.border;
+    const root=appRoot();
+    if(root){root.style.zoom=String(st.font);}
+    $("fontSizeValue").textContent=Math.round(st.font*100)+"%";
+    $("settingPaidBorder").checked=st.border;
   }
-  if($("settingsBtn"))$("settingsBtn").onclick=()=>{$("settingsSheet").classList.add("open");apply();};
-  if($("settingsCloseBtn"))$("settingsCloseBtn").onclick=()=>$("settingsSheet").classList.remove("open");
-  if($("settingsSheet"))$("settingsSheet").onclick=e=>{if(e.target===$("settingsSheet"))$("settingsSheet").classList.remove("open");};
-  if($("fontDownBtn"))$("fontDownBtn").onclick=()=>{st.font=Math.max(.8,Math.round((st.font-.05)*20)/20);save();apply();};
-  if($("fontUpBtn"))$("fontUpBtn").onclick=()=>{st.font=Math.min(1.3,Math.round((st.font+.05)*20)/20);save();apply();};
-  if($("fontResetBtn"))$("fontResetBtn").onclick=()=>{st.font=1;save();apply();};
-  if($("settingPaidBorder"))$("settingPaidBorder").onchange=e=>{st.border=e.target.checked;save();};
+  function close(){ $("settingsSheet").classList.remove("open"); }
+  $("settingsBtn").onclick=()=>{$("settingsSheet").classList.add("open");apply();};
+  $("settingsCloseBtn").onclick=close;
+  $("settingsSheet").onclick=e=>{if(e.target===$("settingsSheet"))close();};
+  $("fontDownBtn").onclick=()=>{st.font=Math.max(1,Math.round((st.font-.05)*20)/20);save();apply();};
+  $("fontUpBtn").onclick=()=>{st.font=Math.min(1.5,Math.round((st.font+.05)*20)/20);save();apply();};
+  $("fontResetBtn").onclick=()=>{st.font=1.25;save();apply();};
+  $("settingPaidBorder").onchange=e=>{st.border=e.target.checked;save();};
+  $("settingsCompanyBtn").onclick=()=>{close();$("companyManageBtn")?.click();};
+  $("settingsBackupBtn").onclick=()=>{close();$("directJsonDownloadBtn")?.click();};
+  $("settingsSettlementBtn").onclick=()=>{close();$("openSettlementBtn")?.click();};
+  $("settingsExportBtn").onclick=()=>{close(); if(typeof openExport==="function")openExport();};
   apply();
 })();
 </script>
