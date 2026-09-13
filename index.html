@@ -226,19 +226,14 @@
 </div>
 
 <main class="app">
-  <!-- 상단 헤더 영역 수정 -->
-<header class="bg-indigo-950 text-white shadow-sm sticky top-0 z-30">
-    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-            <span class="bg-emerald-500 text-white w-7 h-7 rounded-lg flex items-center justify-center font-bold text-sm shadow-sm">₩</span>
-            <h1 class="text-lg font-bold tracking-tight">일당달력</h1>
-        </div>
-        <!-- ⚙️ 설정 톱니바퀴 아이콘 (우측 상단 맨 끝 고정) -->
-        <button onclick="toggleSettingsModal(true)" class="text-slate-300 hover:text-white p-2 transition text-lg" aria-label="설정">
-            <i class="fa-solid fa-gear"></i>
-        </button>
+  <header class="compact-header">
+    <div class="brand"><span class="mark">₩</span><span>일당달력</span></div>
+    <div class="header-actions">
+      <button class="btn" id="exitBtn">나가기</button>
+      <button class="btn" id="mainCompanyManageBtn">업체 관리</button>
+      <button class="btn primary" id="exportBtn">내보내기</button>
     </div>
-</header>
+  </header>
 
   <div class="layout">
     <!-- 달력 섹션 (좌우 스와이프 제스처 지원) -->
@@ -275,7 +270,6 @@
   </div>
 
   <!-- 데이터 저장 & 정산 패널 -->
-  <!--
   <section class="save-panel card" style="margin-top:12px;">
     <div class="save-panel-title">데이터 백업 & 정산</div>
     <div class="save-panel-row">
@@ -288,7 +282,6 @@
       <button type="button" class="btn" id="fileStatusBtn" title="저장 상태">저장됨</button>
     </div>
   </section>
-  -->
 
   <button id="pwaInstallBottom" type="button" onclick="installIldangApp()">📱 홈 화면에 일당달력 설치</button>
   <input id="dataImportInput" type="file" accept=".json,application/json" style="display:none">
