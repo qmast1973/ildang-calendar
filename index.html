@@ -563,9 +563,6 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
           정산 완료 날짜 검은색 테두리
         </label>
       </section>
-      <section class="set-sec">
-        <button type="button" class="btn" id="exitBtn" style="width:100%">나가기</button>
-      </section>
       <div style="text-align:center;color:#8a948f;font-size:11px;">앱 버전 2026.10.04-c (글자크기 방식 변경판)</div>
     </div>
   </div>
@@ -1414,12 +1411,6 @@ $('shareCopy').onclick = async () => {
 // 파일 시스템 접근 & 데이터 가져오기
 $('settingsExportBtn').onclick = () => { $('settingsSheet').classList.remove('open'); openExport(); };
 $('settingsCompanyBtn').onclick = () => { $('settingsSheet').classList.remove('open'); closeDateActionPopup(); openCompanyManage(); };
-$('exitBtn').onclick = () => {
-  if(confirm('일당달력에서 나갈까요? 기록은 이 기기에 안전하게 보관됩니다.')){
-    if(history.length > 1) history.back();
-    else location.replace('about:blank');
-  }
-};
 $('dataSaveBtn').onclick = async () => {
   saveToStorage();
   try{
