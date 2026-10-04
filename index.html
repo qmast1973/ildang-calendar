@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="app-version" content="2026.10.04-f">
+  <meta name="app-version" content="2026.10.04-g">
   <meta name="theme-color" content="#16764f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -20,8 +20,8 @@
     *{box-sizing:border-box}
     html,body{min-height:100%;margin:0;overscroll-behavior-y:none}
     body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR","Malgun Gothic",Arial,sans-serif;font-size:calc(14px * var(--fs,1))}
-    .app{width:min(100%,420px);min-height:100svh;margin:auto;padding:12px 14px 34px;background:#f5f7f5}
-    @media(min-width:421px){
+    .app{width:100%;max-width:min(100%,720px);min-height:100svh;margin:auto;padding:12px 14px 34px;background:#f5f7f5}
+    @media(min-width:901px){
       body{padding:20px 0}
       .app{border-radius:26px;box-shadow:0 16px 45px #1d352024;min-height:720px}
     }
@@ -123,7 +123,7 @@
     /* 모달 시트 공통 */
     .sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;padding:10px;z-index:1000}
     .sheet.open{display:flex}
-    .sheet-box{width:min(420px,100%);background:#fff;border-radius:20px;padding:18px;box-shadow:0 12px 45px rgba(0,0,0,.25);max-height:90vh;overflow-y:auto;box-sizing:border-box}
+    .sheet-box{width:min(560px,100%);background:#fff;border-radius:20px;padding:18px;box-shadow:0 12px 45px rgba(0,0,0,.25);max-height:90vh;overflow-y:auto;box-sizing:border-box}
     .sheet-title{font-size:calc(18px * var(--fs,1));font-weight:800;margin:0 0 14px}
     .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
     .field{display:flex;flex-direction:column;gap:5px;font-size:calc(11px * var(--fs,1));font-weight:700}
@@ -221,9 +221,9 @@ body.no-paid-border .day.settled-date-cell{border:0!important}
 html,body{overflow-x:clip;max-width:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 html{touch-action:pan-x pan-y}
 .sheet-box{max-height:90vh;max-height:90dvh;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
-.icon-btn{display:inline-flex;align-items:center;justify-content:center;text-align:center;line-height:1;min-width:clamp(30px,9.5vw,40px);height:clamp(30px,9.5vw,40px);padding:0 clamp(6px,2.5vw,12px);font-size:calc(clamp(13px,3.8vw,16px) * var(--fs,1));white-space:nowrap}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;text-align:center;line-height:1;min-width:calc(34px * var(--fs,1));height:calc(34px * var(--fs,1));padding:0 calc(9px * var(--fs,1));font-size:calc(14px * var(--fs,1));white-space:nowrap}
 .nav{gap:clamp(3px,1.2vw,5px)}
-.month-title{font-size:calc(clamp(15px,5vw,18px) * var(--fs,1));white-space:nowrap}
+.month-title{font-size:calc(17px * var(--fs,1));white-space:nowrap}
 .btn{min-height:36px}
 .field input,.field select,.field textarea,.company-manage-fields input,.company-manage-fields textarea{font-size:calc(16px * var(--fs,1))!important}
 @media(max-width:360px){.app{padding:10px 8px 28px}.day{min-height:52px}.month-title{font-size:calc(16px * var(--fs,1))}}
@@ -587,7 +587,7 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
           정산 완료 날짜 검은색 테두리
         </label>
       </section>
-      <div style="text-align:center;color:#8a948f;font-size:11px;">앱 버전 2026.10.04-f</div>
+      <div style="text-align:center;color:#8a948f;font-size:11px;">앱 버전 2026.10.04-g<span id="viewInfo"></span></div>
     </div>
   </div>
 </div>
@@ -1575,7 +1575,10 @@ try {
   const $=id=>document.getElementById(id);
   function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
   function apply(){
-    document.documentElement.style.setProperty("--fs",String(st.font));
+    var w=window.innerWidth||360;
+    var base=w<=900?Math.min(1.6,Math.max(1,w/390)):1;
+    document.documentElement.style.setProperty("--fs",String(Math.round(st.font*base*100)/100));
+    var vi=$("viewInfo"); if(vi) vi.textContent=" · 화면 폭 "+w+"px";
     $("fontSizeValue").textContent=Math.round(st.font*100)+"%";
     $("settingPaidBorder").checked=st.border;
     document.body.classList.toggle("no-paid-border",!st.border);
@@ -1594,6 +1597,7 @@ try {
   $("fontResetBtn").onclick=()=>{st.font=1;save();apply();};
   $("settingHideSummary").onchange=e=>{st.hideSummary=e.target.checked;save();apply();};
   $("settingPaidBorder").onchange=e=>{st.border=e.target.checked;save();apply();};
+  window.addEventListener("resize",apply);
   apply();
 })();
 </script>
