@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
+  <meta name="app-version" content="2026.10.04-d">
   <meta name="theme-color" content="#16764f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -231,7 +232,22 @@ body{overflow-x:clip}
 body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 </style>
 </head>
-<body>
+<body><script>
+// 설치된 앱이 옛 버전 캐시를 쓰지 않도록 서버의 최신 버전을 확인하고 다르면 새 주소로 다시 불러온다
+(function(){
+  try{
+    var cur=document.querySelector('meta[name="app-version"]').content;
+    fetch(location.pathname+'?chk='+Date.now(),{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
+      var m=t.match(/<meta name="app-version" content="([^"]+)"/);
+      if(m&&m[1]!==cur&&sessionStorage.getItem('ildang_upd')!==m[1]){
+        sessionStorage.setItem('ildang_upd',m[1]);
+        location.replace(location.pathname+'?v='+encodeURIComponent(m[1]));
+      }
+    }).catch(function(){});
+  }catch(e){}
+})();
+</script>
+
 
 <div id="fullscreenStart" aria-hidden="true">
   <div class="fs-card">
@@ -563,7 +579,7 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
           정산 완료 날짜 검은색 테두리
         </label>
       </section>
-      <div style="text-align:center;color:#8a948f;font-size:11px;">앱 버전 2026.10.04-c (글자크기 방식 변경판)</div>
+      <div style="text-align:center;color:#8a948f;font-size:11px;">앱 버전 2026.10.04-d</div>
     </div>
   </div>
 </div>
