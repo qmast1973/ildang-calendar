@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="app-version" content="2026.10.04-l">
+  <meta name="app-version" content="2026.10.04-m">
   <meta name="theme-color" content="#16764f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -57,7 +57,8 @@
     .week div{padding:0 0 6px;text-align:center;color:var(--muted);font-size:calc(11px * var(--fs,1));font-weight:700}
     .week div:first-child{color:var(--red)}
     .week div:last-child{color:#3770ae}
-    .day{min-height:calc(56px * (1 + (var(--fs,1) - 1) * 0.55));border-top:1px solid var(--line);padding:4px 2px;cursor:pointer;position:relative}
+    .days{grid-auto-rows:1fr}
+    .day{min-height:calc(78px * var(--fs,1));border-top:1px solid var(--line);padding:4px 2px;cursor:pointer;position:relative}
     .day:hover{background:#f7faf7}
     .day.blank{cursor:default;background:transparent}
     .day.selected-date-cell{outline:3px solid var(--green)!important;outline-offset:-3px!important;border-radius:10px!important;z-index:5}
@@ -667,7 +668,7 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
           정산 완료 날짜 검은색 테두리
         </label>
       </section>
-      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.04-l<span id="viewInfo"></span></div>
+      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.04-m<span id="viewInfo"></span></div>
     </div>
   </div>
 </div>
