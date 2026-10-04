@@ -1283,6 +1283,7 @@ function openCompanyManage(){
           <button type="button" class="company-manage-delete" data-del-preset="${p.id}">삭제</button>
         </div>
         <div class="company-manage-fields">
+          <input type="text" data-company-name="${p.id}" value="${escapeHtml(p.site||'')}" placeholder="업체명" style="grid-column:1/-1">
           <input type="number" data-company-rate="${p.id}" value="${Number(p.rate||0)}" min="0" step="1000" placeholder="일당 단가(원)">
           <input type="tel" data-company-phone="${p.id}" value="${escapeHtml(p.phone||'')}" placeholder="전화번호">
           <input type="text" data-company-address="${p.id}" value="${escapeHtml(p.address||'')}" placeholder="업체 주소">
@@ -1312,11 +1313,30 @@ document.addEventListener('click', e => {
       if(rateEl) rateEl.focus();
       return;
     }
+    const nameEl = document.querySelector(`[data-company-name=\"${CSS.escape(id)}\"]`);
+    const newName = nameEl ? nameEl.value.trim().replace(/\s+/g,' ') : p.site;
+    if(!newName){
+      alert('업체명을 입력해 주세요.');
+      if(nameEl) nameEl.focus();
+      return;
+    }
+    const oldName = p.site;
+    if(newName !== oldName){
+      if(presets.some(x => x.id !== id && sameSite(x.site, newName))){
+        alert('같은 이름의 업체가 이미 있습니다.');
+        if(nameEl) nameEl.focus();
+        return;
+      }
+      records.forEach(r => { if(sameSite(r.site, oldName)) r.site = newName; });
+      p.site = newName;
+    }
     p.rate = rate;
     p.phone = phone ? phone.value.trim() : '';
     p.address = address ? address.value.trim() : '';
     p.memo = memo ? memo.value.trim() : '';
     save();
+    render();
+    openCompanyManage();
     alert('업체 정보가 저장되었습니다.');
     return;
   }
