@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#16764f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>일당달력</title>
@@ -210,8 +211,19 @@
   </style>
 
 <style id="settings-only-css">
-#settingsBtn{position:fixed;top:10px;right:10px;z-index:2100;width:44px;height:44px;border-radius:50%;font-size:20px;padding:0}
-@media(max-width:700px){#settingsBtn{top:calc(10px + env(safe-area-inset-top,0px));right:10px}}
+#settingsBtn{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:max(10px,calc(50% - 210px + 10px));z-index:900;width:44px;height:44px;border-radius:50%;font-size:20px;padding:0;box-shadow:0 2px 8px #1d322526}
+body.sheet-open #settingsBtn{display:none}
+#settingsCloseBtn{position:absolute;top:12px;right:12px;width:44px;height:44px;padding:0;font-size:24px}
+.set-sec{border:1px solid #dce4de;border-radius:12px;padding:12px}
+.set-sec .btn{min-height:40px}
+body.no-paid-border .day.settled-date-cell{border:0!important}
+.compact-header{padding-right:52px}
+html,body{overflow-x:hidden}
+.sheet-box{max-height:90vh;max-height:90dvh;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+.icon-btn{min-width:40px;height:40px;white-space:nowrap;padding:0 10px}
+.btn{min-height:36px}
+.field input,.field select,.field textarea,.company-manage-fields input,.company-manage-fields textarea{font-size:16px!important}
+@media(max-width:360px){.app{padding:10px 8px 28px}.day{min-height:52px}.month-title{font-size:16px}}
 </style>
 </head>
 <body><button type="button" class="btn" id="settingsBtn" aria-label="설정" title="설정">⚙️</button>
@@ -229,9 +241,7 @@
   <header class="compact-header">
     <div class="brand"><span class="mark">₩</span><span>일당달력</span></div>
     <div class="header-actions">
-      <button class="btn" id="exitBtn">나가기</button>
       <button class="btn" id="mainCompanyManageBtn">업체 관리</button>
-      <button class="btn primary" id="exportBtn">내보내기</button>
     </div>
   </header>
 
@@ -269,22 +279,7 @@
     </aside>
   </div>
 
-  <!-- 데이터 저장 & 정산 패널 -->
-  <section class="save-panel card" style="margin-top:12px;">
-    <div class="save-panel-title">데이터 백업 & 정산</div>
-    <div class="save-panel-row">
-      <button type="button" class="btn primary" id="openSettlementBtn" style="flex:1 1 100%; padding:10px; font-size:13px; background:var(--green-dark);">🔍 월별 업체 정산 및 입금 관리</button>
-    </div>
-    <div class="save-panel-row" style="margin-top:8px;">
-      <button type="button" class="btn" id="dataSaveBtn">파일 연동/자동저장</button>
-      <button type="button" class="btn" id="directJsonDownloadBtn">JSON 백업 다운로드</button>
-      <button type="button" class="btn" id="dataImportBtn">데이터 불러오기</button>
-      <button type="button" class="btn" id="fileStatusBtn" title="저장 상태">저장됨</button>
-    </div>
-  </section>
-
   <button id="pwaInstallBottom" type="button" onclick="installIldangApp()">📱 홈 화면에 일당달력 설치</button>
-  <input id="dataImportInput" type="file" accept=".json,application/json" style="display:none">
 </main>
 
 <!-- 기록 수정/추가 시트 -->
@@ -522,6 +517,47 @@
     <div class="sheet-actions">
       <span></span>
       <button type="button" class="btn" id="companyManageClose">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 설정 메뉴 -->
+<div class="sheet" id="settingsSheet">
+  <div class="sheet-box" style="position:relative;">
+    <div class="sheet-head-row"><h1 class="sheet-title">⚙️ 설정</h1></div>
+    <button type="button" class="btn" id="settingsCloseBtn" aria-label="닫기">×</button>
+    <div style="display:grid;gap:12px;">
+      <section class="set-sec">
+        <strong>화면 글자 크기</strong>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;">
+          <button type="button" class="btn" id="fontDownBtn">A−</button>
+          <strong id="fontSizeValue">100%</strong>
+          <button type="button" class="btn" id="fontUpBtn">A+</button>
+          <button type="button" class="btn" id="fontResetBtn">기본</button>
+        </div>
+      </section>
+      <section class="set-sec">
+        <strong>데이터 백업 &amp; 정산</strong>
+        <div class="save-panel-row" style="margin-top:10px;">
+          <button type="button" class="btn primary" id="openSettlementBtn" style="flex:1 1 100%;background:var(--green-dark);">🔍 월별 업체 정산 및 입금 관리</button>
+          <button type="button" class="btn" id="settingsExportBtn">내보내기</button>
+          <button type="button" class="btn" id="settingsCompanyBtn">업체 관리</button>
+          <button type="button" class="btn" id="dataSaveBtn">파일 연동/자동저장</button>
+          <button type="button" class="btn" id="directJsonDownloadBtn">JSON 백업 다운로드</button>
+          <button type="button" class="btn" id="dataImportBtn">데이터 불러오기</button>
+          <button type="button" class="btn" id="fileStatusBtn" title="저장 상태">저장됨</button>
+        </div>
+        <input id="dataImportInput" type="file" accept=".json,application/json" style="display:none">
+      </section>
+      <section class="set-sec">
+        <label style="display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" id="settingPaidBorder" checked>
+          정산 완료 날짜 검은색 테두리
+        </label>
+      </section>
+      <section class="set-sec">
+        <button type="button" class="btn" id="exitBtn" style="width:100%">나가기</button>
+      </section>
     </div>
   </div>
 </div>
@@ -1108,12 +1144,6 @@ function buildExportData(){
 }
 
 // 이벤트 핸들러 등록
-$('exitBtn').onclick = () => {
-  if(confirm('일당달력에서 나갈까요? 기록은 이 기기에 안전하게 보관됩니다.')){
-    if(history.length > 1) history.back();
-    else location.replace('about:blank');
-  }
-};
 $('prevBtn').onclick = () => { cursor = new Date(cursor.getFullYear(), cursor.getMonth()-1, 1); render(); };
 $('nextBtn').onclick = () => { cursor = new Date(cursor.getFullYear(), cursor.getMonth()+1, 1); render(); };
 $('todayBtn').onclick = () => { cursor = new Date(); cursor = new Date(cursor.getFullYear(), cursor.getMonth(), 1); selectedDate = iso(new Date()); render(); };
@@ -1295,7 +1325,6 @@ document.addEventListener('click', e => {
 });
 
 // 내보내기 제출
-$('exportBtn').onclick = openExport;
 $('exportCancel').onclick = closeExport;
 $('exportCompanyButton').onclick = () => {
   let sites = [...new Set(records.map(r => r.site))].sort();
@@ -1375,6 +1404,14 @@ $('shareCopy').onclick = async () => {
 };
 
 // 파일 시스템 접근 & 데이터 가져오기
+$('settingsExportBtn').onclick = () => { $('settingsSheet').classList.remove('open'); openExport(); };
+$('settingsCompanyBtn').onclick = () => { $('settingsSheet').classList.remove('open'); closeDateActionPopup(); openCompanyManage(); };
+$('exitBtn').onclick = () => {
+  if(confirm('일당달력에서 나갈까요? 기록은 이 기기에 안전하게 보관됩니다.')){
+    if(history.length > 1) history.back();
+    else location.replace('about:blank');
+  }
+};
 $('dataSaveBtn').onclick = async () => {
   saveToStorage();
   try{
@@ -1487,66 +1524,32 @@ try {
   render();
 } catch(e) { console.error(e); }
 </script>
-<!-- 설정 메뉴: 기존 기능은 변경하지 않고 메뉴만 연결 -->
-<div class="sheet" id="settingsSheet">
-  <div class="sheet-box" style="position:relative;">
-    <div class="sheet-head-row"><h1 class="sheet-title" style="margin:0;">⚙️ 설정</h1></div>
-    <button type="button" class="btn" id="settingsCloseBtn" style="position:absolute;top:12px;right:12px;width:36px;height:36px;padding:0;font-size:22px;">×</button>
-    <div style="display:grid;gap:12px;">
-      <section style="border:1px solid #dce4de;border-radius:12px;padding:12px;">
-        <strong>화면 글자 크기</strong>
-        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;">
-          <button type="button" class="btn" id="fontDownBtn">A−</button>
-          <strong id="fontSizeValue">125%</strong>
-          <button type="button" class="btn" id="fontUpBtn">A+</button>
-          <button type="button" class="btn" id="fontResetBtn">기본 125%</button>
-        </div>
-      </section>
-      <section style="border:1px solid #dce4de;border-radius:12px;padding:12px;">
-        <strong>관리</strong>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">
-          <button type="button" class="btn" id="settingsCompanyBtn">업체 관리</button>
-          <button type="button" class="btn" id="settingsBackupBtn">백업 / 복원</button>
-          <button type="button" class="btn" id="settingsSettlementBtn">입금 정산 관리</button>
-          <button type="button" class="btn" id="settingsExportBtn">내보내기</button>
-        </div>
-      </section>
-      <section style="border:1px solid #dce4de;border-radius:12px;padding:12px;">
-        <label style="display:flex;align-items:center;gap:8px;">
-          <input type="checkbox" id="settingPaidBorder" checked>
-          정산 완료 날짜 검은색 테두리
-        </label>
-      </section>
-    </div>
-  </div>
-</div>
-
 <script id="settings-only-js">
 (function(){
-  const KEY="ildang_settings_v3";
-  let st={font:1.25,border:true};
+  const KEY="ildang_settings_v4";
+  let st={font:1,border:true};
   try{st=Object.assign(st,JSON.parse(localStorage.getItem(KEY)||"{}"));}catch(e){}
   const $=id=>document.getElementById(id);
-  function save(){localStorage.setItem(KEY,JSON.stringify(st));}
-  function appRoot(){return document.querySelector("main.app") || document.querySelector(".app");}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
   function apply(){
-    const root=appRoot();
-    if(root){root.style.zoom=String(st.font);}
+    const app=document.querySelector(".app");
+    app.style.zoom=String(st.font);
+    app.style.width="min("+(100/st.font)+"%,"+(420/st.font)+"px)";
     $("fontSizeValue").textContent=Math.round(st.font*100)+"%";
     $("settingPaidBorder").checked=st.border;
+    document.body.classList.toggle("no-paid-border",!st.border);
   }
-  function close(){ $("settingsSheet").classList.remove("open"); }
-  $("settingsBtn").onclick=()=>{$("settingsSheet").classList.add("open");apply();};
+  function close(){ $("settingsSheet").classList.remove("open"); document.body.classList.remove("sheet-open"); }
+  $("settingsBtn").onclick=()=>{$("settingsSheet").classList.add("open");document.body.classList.add("sheet-open");apply();};
   $("settingsCloseBtn").onclick=close;
   $("settingsSheet").onclick=e=>{if(e.target===$("settingsSheet"))close();};
-  $("fontDownBtn").onclick=()=>{st.font=Math.max(1,Math.round((st.font-.05)*20)/20);save();apply();};
-  $("fontUpBtn").onclick=()=>{st.font=Math.min(1.5,Math.round((st.font+.05)*20)/20);save();apply();};
-  $("fontResetBtn").onclick=()=>{st.font=1.25;save();apply();};
-  $("settingPaidBorder").onchange=e=>{st.border=e.target.checked;save();};
-  $("settingsCompanyBtn").onclick=()=>{close();$("companyManageBtn")?.click();};
-  $("settingsBackupBtn").onclick=()=>{close();$("directJsonDownloadBtn")?.click();};
-  $("settingsSettlementBtn").onclick=()=>{close();$("openSettlementBtn")?.click();};
-  $("settingsExportBtn").onclick=()=>{close(); if(typeof openExport==="function")openExport();};
+  // 설정 안의 기능 버튼을 누르면 설정창을 닫고 해당 기능 실행
+  ["openSettlementBtn","directJsonDownloadBtn","dataImportBtn","settingsExportBtn","settingsCompanyBtn"].forEach(id=>
+    $(id).addEventListener("click",close));
+  $("fontDownBtn").onclick=()=>{st.font=Math.max(.9,Math.round((st.font-.05)*20)/20);save();apply();};
+  $("fontUpBtn").onclick=()=>{st.font=Math.min(1.3,Math.round((st.font+.05)*20)/20);save();apply();};
+  $("fontResetBtn").onclick=()=>{st.font=1;save();apply();};
+  $("settingPaidBorder").onchange=e=>{st.border=e.target.checked;save();apply();};
   apply();
 })();
 </script>
