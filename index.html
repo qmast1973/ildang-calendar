@@ -241,7 +241,6 @@ html,body{overflow-x:hidden}
   <header class="compact-header">
     <div class="brand"><span class="mark">₩</span><span>일당달력</span></div>
     <div class="header-actions">
-      <button class="btn" id="mainCompanyManageBtn">업체 관리</button>
     </div>
   </header>
 
@@ -1263,7 +1262,6 @@ $('dateActionAdd').onclick = () => {
 
 // 업체 관리
 $('companyManageBtn').onclick = () => { closeDateActionPopup(); openCompanyManage(); };
-$('mainCompanyManageBtn').onclick = () => openCompanyManage();
 function openCompanyManage(){
   const box = $('companyManageList');
   const ordered = presets.slice().sort((a,b) => (b.lastUsed||0) - (a.lastUsed||0));
