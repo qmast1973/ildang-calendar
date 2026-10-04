@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="app-version" content="2026.10.04-p">
+  <meta name="app-version" content="2026.10.04-q">
   <meta name="theme-color" content="#16764f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -235,6 +235,13 @@ html{touch-action:pan-x pan-y}
 .date-action-backdrop,.sheet,.share-popup{overscroll-behavior:contain}
 .date-action-sheet,.sheet-box{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+#settingsSheet .btn:not(.primary){background:#e9f4ee;color:var(--green-dark);border:1.5px solid #8fc4a8;box-shadow:0 2px 0 #b9d9c7;padding:10px 14px;min-height:calc(44px * var(--fs,1))}
+#settingsSheet .btn:not(.primary):active{background:#d3eadc;box-shadow:none;transform:translateY(2px)}
+#settingsSheet .btn.primary{border:1.5px solid var(--green-dark);box-shadow:0 3px 0 #04402f;min-height:calc(48px * var(--fs,1))}
+#settingsSheet .btn.primary:active{box-shadow:none;transform:translateY(3px)}
+#settingsSheet #settingsCloseBtn{background:#f1f3f2;color:var(--ink);border:1.5px solid #c5ccc8;box-shadow:none;padding:0}
+#settingsSheet #fileStatusBtn{background:#fff;color:#555;border-style:dashed}
+#helpSheet #helpCloseBtn{background:#f1f3f2;border:1.5px solid #c5ccc8;box-shadow:none}
 .help-body details{border:1px solid #dce4de;border-radius:12px;padding:10px 12px;margin-top:8px}
 .help-body summary{cursor:pointer;font-weight:800;font-size:calc(15px * var(--fs,1))}
 .help-body ul{margin:8px 0 2px;padding-left:18px;font-size:calc(13px * var(--fs,1));line-height:1.55;color:#2c3833}
@@ -668,7 +675,7 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
           정산 완료 날짜 검은색 테두리
         </label>
       </section>
-      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.04-p<span id="viewInfo"></span></div>
+      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.04-q<span id="viewInfo"></span></div>
     </div>
   </div>
 </div>
