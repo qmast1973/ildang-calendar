@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="app-version" content="2026.10.04-h">
+  <meta name="app-version" content="2026.10.04-i">
   <meta name="theme-color" content="#16764f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -28,10 +28,10 @@
     }
     
     /* 헤더 */
-    .compact-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;min-height:42px}
-    .brand{display:flex;align-items:center;gap:8px;font-size:calc(18px * var(--fs,1));font-weight:800}
-    .mark{width:31px;height:31px;border-radius:10px;background:var(--green);color:white;display:grid;place-items:center;font-size:calc(17px * var(--fs,1))}
-    .header-actions{display:flex;gap:5px}
+    .compact-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;min-height:calc(42px * var(--fs,1))}
+    .brand{display:flex;align-items:center;gap:8px;min-width:0;font-size:calc(18px * var(--fs,1));font-weight:800}
+    .mark{flex:none;width:calc(31px * var(--fs,1));height:calc(31px * var(--fs,1));border-radius:10px;background:var(--green);color:white;display:grid;place-items:center;font-size:calc(17px * var(--fs,1));line-height:1}
+    .header-actions{display:flex;gap:5px;flex:none}
     .btn{border:0;background:white;color:var(--ink);font:inherit;font-weight:700;padding:8px 10px;border-radius:10px;cursor:pointer;box-shadow:0 1px 3px #1d322510;font-size:calc(12px * var(--fs,1));touch-action:manipulation}
     .btn:hover{background:#f0f4f0}
     .btn.primary{background:var(--green);color:#fff}
@@ -57,7 +57,7 @@
     .week div{padding:0 0 6px;text-align:center;color:var(--muted);font-size:calc(11px * var(--fs,1));font-weight:700}
     .week div:first-child{color:var(--red)}
     .week div:last-child{color:#3770ae}
-    .day{min-height:56px;border-top:1px solid var(--line);padding:4px 2px;cursor:pointer;position:relative}
+    .day{min-height:calc(56px * (1 + (var(--fs,1) - 1) * 0.55));border-top:1px solid var(--line);padding:4px 2px;cursor:pointer;position:relative}
     .day:hover{background:#f7faf7}
     .day.blank{cursor:default;background:transparent}
     .day.selected-date-cell{outline:3px solid var(--green)!important;outline-offset:-3px!important;border-radius:10px!important;z-index:5}
@@ -65,7 +65,7 @@
     .date{font-size:calc(12px * var(--fs,1));font-weight:700}
     .sun .date{color:var(--red)}
     .sat .date{color:#3770ae}
-    .today .date{background:var(--green);color:#fff;width:20px;height:20px;display:grid;place-items:center;border-radius:50%;margin-top:-2px}
+    .today .date{background:var(--green);color:#fff;width:calc(20px * var(--fs,1));height:calc(20px * var(--fs,1));display:grid;place-items:center;border-radius:50%;margin-top:-2px}
     
     /* 달력 엔트리(공수 & 휴무 박스) */
     .entry{
@@ -213,7 +213,7 @@
   </style>
 
 <style id="settings-only-css">
-#settingsBtn{width:40px;height:40px;border-radius:50%;font-size:calc(19px * var(--fs,1));padding:0;box-shadow:0 1px 4px #1d322526}
+#settingsBtn{flex:none;width:calc(40px * var(--fs,1));height:calc(40px * var(--fs,1));border-radius:50%;font-size:calc(19px * var(--fs,1));padding:0;box-shadow:0 1px 4px #1d322526}
 #settingsCloseBtn{position:absolute;top:12px;right:12px;width:44px;height:44px;padding:0;font-size:calc(24px * var(--fs,1))}
 .set-sec{border:1px solid #dce4de;border-radius:12px;padding:12px}
 .set-sec .btn{min-height:40px}
@@ -588,7 +588,7 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
           정산 완료 날짜 검은색 테두리
         </label>
       </section>
-      <div style="text-align:center;color:#8a948f;font-size:11px;">앱 버전 2026.10.04-h<span id="viewInfo"></span></div>
+      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.04-i<span id="viewInfo"></span></div>
     </div>
   </div>
 </div>
@@ -1577,7 +1577,7 @@ try {
   function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
   function apply(){
     var w=window.innerWidth||360;
-    var base=w<=1100?Math.min(1.6,Math.max(1,w/390)):1;
+    var base=w<=1100?Math.min(2.4,Math.max(1,w/390)):1;
     document.documentElement.style.setProperty("--fs",String(Math.round(st.font*base*100)/100));
     var vi=$("viewInfo"); if(vi) vi.textContent=" · 화면 폭 "+w+"px";
     $("fontSizeValue").textContent=Math.round(st.font*100)+"%";
