@@ -2,9 +2,9 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="app-version" content="2026.10.04-e">
+  <meta name="app-version" content="2026.10.04-f">
   <meta name="theme-color" content="#16764f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -218,7 +218,8 @@
 .set-sec .btn{min-height:40px}
 body.hide-summary aside.side{display:none}
 body.no-paid-border .day.settled-date-cell{border:0!important}
-body{overflow-x:clip}
+html,body{overflow-x:clip;max-width:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html{touch-action:pan-x pan-y}
 .sheet-box{max-height:90vh;max-height:90dvh;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
 .icon-btn{display:inline-flex;align-items:center;justify-content:center;text-align:center;line-height:1;min-width:clamp(30px,9.5vw,40px);height:clamp(30px,9.5vw,40px);padding:0 clamp(6px,2.5vw,12px);font-size:calc(clamp(13px,3.8vw,16px) * var(--fs,1));white-space:nowrap}
 .nav{gap:clamp(3px,1.2vw,5px)}
@@ -586,7 +587,7 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
           정산 완료 날짜 검은색 테두리
         </label>
       </section>
-      <div style="text-align:center;color:#8a948f;font-size:11px;">앱 버전 2026.10.04-e</div>
+      <div style="text-align:center;color:#8a948f;font-size:11px;">앱 버전 2026.10.04-f</div>
     </div>
   </div>
 </div>
@@ -1595,6 +1596,10 @@ try {
   $("settingPaidBorder").onchange=e=>{st.border=e.target.checked;save();apply();};
   apply();
 })();
+</script>
+<script>
+// 두 손가락 확대/축소 및 더블탭 확대 방지 (iOS)
+['gesturestart','gesturechange','gestureend'].forEach(function(t){document.addEventListener(t,function(e){e.preventDefault();});});
 </script>
 <script id="modal-lock-js">
 (function(){
