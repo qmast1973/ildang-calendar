@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="app-version" content="2026.10.04-k">
+  <meta name="app-version" content="2026.10.04-l">
   <meta name="theme-color" content="#16764f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -234,9 +234,84 @@ html{touch-action:pan-x pan-y}
 .date-action-backdrop,.sheet,.share-popup{overscroll-behavior:contain}
 .date-action-sheet,.sheet-box{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+.help-body details{border:1px solid #dce4de;border-radius:12px;padding:10px 12px;margin-top:8px}
+.help-body summary{cursor:pointer;font-weight:800;font-size:calc(15px * var(--fs,1))}
+.help-body ul{margin:8px 0 2px;padding-left:18px;font-size:calc(13px * var(--fs,1));line-height:1.55;color:#2c3833}
+.help-body li{margin-top:4px}
+#helpCloseBtn{position:absolute;top:12px;right:12px;width:calc(44px * var(--fs,1));height:calc(44px * var(--fs,1));padding:0;font-size:calc(24px * var(--fs,1))}
 </style>
 </head>
-<body><script>
+<body><!-- 도움말 -->
+<div class="sheet" id="helpSheet" style="z-index:1300;">
+  <div class="sheet-box" style="position:relative;">
+    <div class="sheet-head-row"><h1 class="sheet-title" style="margin:0;">❓ 사용 도움말</h1></div>
+    <button type="button" class="btn" id="helpCloseBtn" aria-label="닫기">×</button>
+    <div class="help-body">
+      <details open><summary>📅 달력 보기</summary>
+        <ul>
+          <li>화면을 좌우로 쓸어 넘기거나 ‹ › 버튼으로 달을 바꿉니다. <b>오늘</b> 버튼은 이번 달로 돌아옵니다.</li>
+          <li>날짜 칸에는 그날 일한 업체명과 공수가 표시됩니다. 공수에 따라 칸 색이 달라집니다. (0.5 초록 / 1.0 파랑 / 1.5 보라 / 2.0 빨강, 휴무는 회색)</li>
+          <li>하루에 기록이 3건 이상이면 두 건만 보이고 “+N건”으로 표시됩니다.</li>
+          <li>입금 정산이 끝난 날은 검은 테두리로 표시됩니다. (설정에서 끌 수 있어요)</li>
+        </ul>
+      </details>
+      <details><summary>✍️ 일당 입력하기</summary>
+        <ul>
+          <li>날짜를 누르면 입력창이 열립니다. 그날 기록이 있으면 위에 목록으로 나옵니다.</li>
+          <li><b>빠른 입력</b>: 오른쪽 공수(▲▼ 또는 직접 입력)를 정한 뒤, 자주 가는 업체 버튼을 누르면 바로 기록됩니다.</li>
+          <li><b>휴무(0공수)</b> 버튼으로 쉬는 날을 등록합니다.</li>
+          <li>새 업체는 업체명과 일당 금액을 입력해 추가합니다. 추가한 업체는 다음부터 버튼으로 나타납니다.</li>
+          <li><b>직접 추가</b>를 누르면 일당, 공수, 식대·유류비 등 경비까지 자세히 입력할 수 있습니다.</li>
+          <li>이미 입력한 기록을 누르면 수정하거나 삭제할 수 있습니다.</li>
+        </ul>
+      </details>
+      <details><summary>🏢 업체 관리</summary>
+        <ul>
+          <li>설정 → <b>업체 관리</b>에서 업체명, 기본 일당, 전화번호, 주소, 메모(담당자·입금 정보 등)를 수정합니다.</li>
+          <li>업체명을 바꾸면 이미 입력한 기록의 업체명도 함께 바뀝니다.</li>
+          <li>업체를 삭제해도 이미 입력한 달력 기록은 지워지지 않습니다. (빠른 입력 버튼만 사라집니다)</li>
+        </ul>
+      </details>
+      <details><summary>💰 월별 정산 · 입금 관리</summary>
+        <ul>
+          <li>설정 → <b>월별 업체 정산 및 입금 관리</b>에서 월과 업체를 고르면 누적 공수, 일당 합계, 경비, 세금, 최종 수령액이 계산됩니다.</li>
+          <li>세금은 <b>3.3% 공제</b> 또는 <b>공제 없음</b>을 고를 수 있습니다.</li>
+          <li>업체별로 한 달 치를 <b>전체 입금 완료</b> 또는 <b>미지급</b>으로 한꺼번에 바꿀 수 있습니다.</li>
+          <li>홈 화면의 “이번 달 미수금”은 아직 입금되지 않은 금액의 합계입니다.</li>
+        </ul>
+      </details>
+      <details><summary>📤 내보내기 · 공유</summary>
+        <ul>
+          <li>설정 → <b>내보내기</b>에서 기간과 업체를 고르고, <b>텍스트 목록</b>(카카오톡·문자 전송용) 또는 <b>엑셀 CSV 파일</b>로 만들 수 있습니다.</li>
+          <li>날짜, 공수, 합계 등 넣을 항목을 골라 내용을 정할 수 있습니다.</li>
+        </ul>
+      </details>
+      <details><summary>💾 저장 · 백업 · 복원</summary>
+        <ul>
+          <li>모든 기록은 <b>이 기기의 브라우저에 자동 저장</b>되며 서버로 전송되지 않습니다.</li>
+          <li>기기를 바꾸거나 앱을 지우기 전에는 설정 → <b>JSON 백업 다운로드</b>로 파일을 꼭 저장해 두세요.</li>
+          <li>새 기기에서는 <b>데이터 불러오기</b>로 그 백업 파일을 선택하면 복원됩니다.</li>
+          <li><b>파일 연동/자동저장</b>은 지원되는 브라우저에서 파일을 연결해 두면 변경 때마다 그 파일에도 저장합니다. 아래 “저장됨/저장 대기/브라우저 저장” 표시로 상태를 볼 수 있어요.</li>
+        </ul>
+      </details>
+      <details><summary>⚙️ 설정</summary>
+        <ul>
+          <li><b>화면 글자 크기</b>: A− / A+ 로 90%~130% 사이에서 조절합니다. 화면이 넓은 기기에서는 자동으로 더 크게 표시됩니다.</li>
+          <li><b>숨기기</b>: 누적 공수·미수금·업체별 정산 영역을 홈에서 감춥니다. (데이터는 그대로입니다)</li>
+          <li><b>검은색 테두리</b>: 입금 정산 완료 날짜 표시를 켜고 끕니다.</li>
+        </ul>
+      </details>
+      <details><summary>📱 앱처럼 설치하기</summary>
+        <ul>
+          <li>브라우저 메뉴의 <b>홈 화면에 추가</b>(또는 화면 아래 설치 버튼)로 앱처럼 설치할 수 있습니다.</li>
+          <li>앱이 예전 화면으로 보이면 완전히 종료했다가 다시 여세요. 설정 맨 아래 <b>앱 버전</b>으로 최신인지 확인할 수 있습니다.</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+</div>
+
+<script>
 // 설치된 앱이 옛 버전 캐시를 쓰지 않도록 서버의 최신 버전을 확인하고 다르면 새 주소로 다시 불러온다
 (function(){
   try{
@@ -556,6 +631,9 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
     <button type="button" class="btn" id="settingsCloseBtn" aria-label="닫기">×</button>
     <div style="display:grid;gap:12px;">
       <section class="set-sec">
+        <button type="button" class="btn" id="openHelpBtn" style="width:100%">❓ 사용 도움말</button>
+      </section>
+      <section class="set-sec">
         <strong>화면 글자 크기</strong>
         <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;">
           <button type="button" class="btn" id="fontDownBtn">A−</button>
@@ -589,7 +667,7 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
           정산 완료 날짜 검은색 테두리
         </label>
       </section>
-      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.04-k<span id="viewInfo"></span></div>
+      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.04-l<span id="viewInfo"></span></div>
     </div>
   </div>
 </div>
@@ -1600,6 +1678,9 @@ try {
   $("fontResetBtn").onclick=()=>{st.font=1;save();apply();};
   $("settingHideSummary").onchange=e=>{st.hideSummary=e.target.checked;save();apply();};
   $("settingPaidBorder").onchange=e=>{st.border=e.target.checked;save();apply();};
+  $("openHelpBtn").onclick=()=>{close();$("helpSheet").classList.add("open");};
+  $("helpCloseBtn").onclick=()=>$("helpSheet").classList.remove("open");
+  $("helpSheet").onclick=e=>{if(e.target===$("helpSheet"))$("helpSheet").classList.remove("open");};
   window.addEventListener("resize",apply);
   apply();
 })();
