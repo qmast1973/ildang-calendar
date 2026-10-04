@@ -218,7 +218,9 @@
 body.no-paid-border .day.settled-date-cell{border:0!important}
 html,body{overflow-x:hidden}
 .sheet-box{max-height:90vh;max-height:90dvh;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
-.icon-btn{min-width:40px;height:40px;white-space:nowrap;padding:0 10px}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;text-align:center;line-height:1;min-width:clamp(30px,9.5vw,40px);height:clamp(30px,9.5vw,40px);padding:0 clamp(6px,2.5vw,12px);font-size:clamp(13px,3.8vw,16px);white-space:nowrap}
+.nav{gap:clamp(3px,1.2vw,5px)}
+.month-title{font-size:clamp(15px,5vw,18px);white-space:nowrap}
 .btn{min-height:36px}
 .field input,.field select,.field textarea,.company-manage-fields input,.company-manage-fields textarea{font-size:16px!important}
 @media(max-width:360px){.app{padding:10px 8px 28px}.day{min-height:52px}.month-title{font-size:16px}}
