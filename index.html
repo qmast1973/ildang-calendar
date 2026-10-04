@@ -18,7 +18,7 @@
     }
     *{box-sizing:border-box}
     html,body{min-height:100%;margin:0;overscroll-behavior-y:none}
-    body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR","Malgun Gothic",Arial,sans-serif;font-size:14px}
+    body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR","Malgun Gothic",Arial,sans-serif;font-size:calc(14px * var(--fs,1))}
     .app{width:min(100%,420px);min-height:100svh;margin:auto;padding:12px 14px 34px;background:#f5f7f5}
     @media(min-width:421px){
       body{padding:20px 0}
@@ -27,10 +27,10 @@
     
     /* 헤더 */
     .compact-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;min-height:42px}
-    .brand{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:800}
-    .mark{width:31px;height:31px;border-radius:10px;background:var(--green);color:white;display:grid;place-items:center;font-size:17px}
+    .brand{display:flex;align-items:center;gap:8px;font-size:calc(18px * var(--fs,1));font-weight:800}
+    .mark{width:31px;height:31px;border-radius:10px;background:var(--green);color:white;display:grid;place-items:center;font-size:calc(17px * var(--fs,1))}
     .header-actions{display:flex;gap:5px}
-    .btn{border:0;background:white;color:var(--ink);font:inherit;font-weight:700;padding:8px 10px;border-radius:10px;cursor:pointer;box-shadow:0 1px 3px #1d322510;font-size:12px;touch-action:manipulation}
+    .btn{border:0;background:white;color:var(--ink);font:inherit;font-weight:700;padding:8px 10px;border-radius:10px;cursor:pointer;box-shadow:0 1px 3px #1d322510;font-size:calc(12px * var(--fs,1));touch-action:manipulation}
     .btn:hover{background:#f0f4f0}
     .btn.primary{background:var(--green);color:#fff}
     .btn.primary:hover{background:var(--green-dark)}
@@ -48,11 +48,11 @@
       -webkit-user-select:none;
     }
     .monthbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-    .month-title{font-size:18px;font-weight:800}
+    .month-title{font-size:calc(18px * var(--fs,1));font-weight:800}
     .nav{display:flex;gap:4px}
-    .icon-btn{width:31px;height:31px;border:1px solid var(--line);border-radius:9px;background:white;cursor:pointer;font-size:16px;font-weight:700;color:var(--ink)}
+    .icon-btn{width:31px;height:31px;border:1px solid var(--line);border-radius:9px;background:white;cursor:pointer;font-size:calc(16px * var(--fs,1));font-weight:700;color:var(--ink)}
     .week,.days{display:grid;grid-template-columns:repeat(7,1fr)}
-    .week div{padding:0 0 6px;text-align:center;color:var(--muted);font-size:11px;font-weight:700}
+    .week div{padding:0 0 6px;text-align:center;color:var(--muted);font-size:calc(11px * var(--fs,1));font-weight:700}
     .week div:first-child{color:var(--red)}
     .week div:last-child{color:#3770ae}
     .day{min-height:56px;border-top:1px solid var(--line);padding:4px 2px;cursor:pointer;position:relative}
@@ -60,7 +60,7 @@
     .day.blank{cursor:default;background:transparent}
     .day.selected-date-cell{outline:3px solid var(--green)!important;outline-offset:-3px!important;border-radius:10px!important;z-index:5}
     .day.settled-date-cell{border:3px solid #000!important;box-sizing:border-box;border-radius:10px!important;z-index:4}
-    .date{font-size:12px;font-weight:700}
+    .date{font-size:calc(12px * var(--fs,1));font-weight:700}
     .sun .date{color:var(--red)}
     .sat .date{color:#3770ae}
     .today .date{background:var(--green);color:#fff;width:20px;height:20px;display:grid;place-items:center;border-radius:50%;margin-top:-2px}
@@ -72,8 +72,8 @@
       flex-direction:column;align-items:center;justify-content:center;min-height:32px;
       background:var(--light);
     }
-    .entry .site{display:block;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px;font-weight:700}
-    .entry .pay{display:block;width:100%;font-size:13px;font-weight:900;color:var(--green)}
+    .entry .site{display:block;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:calc(10px * var(--fs,1));font-weight:700}
+    .entry .pay{display:block;width:100%;font-size:calc(13px * var(--fs,1));font-weight:900;color:var(--green)}
     .entry.partial{background:#fff3e4}
     .entry.partial .pay{color:#a95e13}
     .entry.manpower-05{background:#dff4d2!important}
@@ -91,45 +91,45 @@
       border:1px solid #d0d7de!important;
     }
     .entry.dayoff .site{
-      font-size:11px!important;
+      font-size:calc(11px * var(--fs,1))!important;
       font-weight:900!important;
       color:var(--gray-text)!important;
     }
     .entry.dayoff .pay{display:none!important}
-    .site.more{font-size:9px;color:var(--muted);text-align:center;margin-top:2px}
+    .site.more{font-size:calc(9px * var(--fs,1));color:var(--muted);text-align:center;margin-top:2px}
 
     /* 사이드 요약 */
     .side{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .summary{padding:14px}
-    .label{color:var(--muted);font-size:11px;font-weight:700}
-    .total{font-size:22px;font-weight:900;margin:4px 0 2px}
-    .total small{font-size:12px}
+    .label{color:var(--muted);font-size:calc(11px * var(--fs,1));font-weight:700}
+    .total{font-size:calc(22px * var(--fs,1));font-weight:900;margin:4px 0 2px}
+    .total small{font-size:calc(12px * var(--fs,1))}
     .company-summary{padding:14px;grid-column:1/-1}
-    .company-summary h2{font-size:13px;margin:0 0 8px;font-weight:800}
+    .company-summary h2{font-size:calc(13px * var(--fs,1));margin:0 0 8px;font-weight:800}
     .company-totals{display:flex;flex-direction:column;gap:6px;max-height:160px;overflow-y:auto}
-    .empty{color:var(--muted);font-size:12px;padding:8px 0}
+    .empty{color:var(--muted);font-size:calc(12px * var(--fs,1));padding:8px 0}
 
     /* 배지 스타일 */
-    .badge-paid{background:#e7f5ec;color:#16764f;font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;white-space:nowrap}
-    .badge-unpaid{background:#fff4f3;color:#d04d43;font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;white-space:nowrap}
-    .badge-dayoff{background:#e2e8f0;color:#475569;font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;white-space:nowrap}
+    .badge-paid{background:#e7f5ec;color:#16764f;font-size:calc(10px * var(--fs,1));font-weight:800;padding:2px 6px;border-radius:4px;white-space:nowrap}
+    .badge-unpaid{background:#fff4f3;color:#d04d43;font-size:calc(10px * var(--fs,1));font-weight:800;padding:2px 6px;border-radius:4px;white-space:nowrap}
+    .badge-dayoff{background:#e2e8f0;color:#475569;font-size:calc(10px * var(--fs,1));font-weight:800;padding:2px 6px;border-radius:4px;white-space:nowrap}
 
     /* 데이터 저장 패널 */
     .save-panel{padding:14px}
-    .save-panel-title{font-size:13px;font-weight:800;margin-bottom:8px}
+    .save-panel-title{font-size:calc(13px * var(--fs,1));font-weight:800;margin-bottom:8px}
     .save-panel-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
     
     /* 모달 시트 공통 */
     .sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;padding:10px;z-index:1000}
     .sheet.open{display:flex}
     .sheet-box{width:min(420px,100%);background:#fff;border-radius:20px;padding:18px;box-shadow:0 12px 45px rgba(0,0,0,.25);max-height:90vh;overflow-y:auto;box-sizing:border-box}
-    .sheet-title{font-size:18px;font-weight:800;margin:0 0 14px}
+    .sheet-title{font-size:calc(18px * var(--fs,1));font-weight:800;margin:0 0 14px}
     .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-    .field{display:flex;flex-direction:column;gap:5px;font-size:11px;font-weight:700}
+    .field{display:flex;flex-direction:column;gap:5px;font-size:calc(11px * var(--fs,1));font-weight:700}
     .field.full{grid-column:1/-1}
     .field input, .field select, .field textarea{
       width:100%;border:1px solid #dce4de;border-radius:9px;padding:9px;font:inherit;
-      font-size:12px;color:var(--ink);background:#fff;outline:0;box-sizing:border-box;
+      font-size:calc(12px * var(--fs,1));color:var(--ink);background:#fff;outline:0;box-sizing:border-box;
     }
     .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px #16764f19}
     .field textarea{resize:vertical;min-height:70px}
@@ -141,34 +141,34 @@
     .date-action-backdrop.open{display:flex}
     .date-action-sheet{width:min(100%,560px);max-height:85vh;overflow-y:auto;background:#fff;border-radius:22px 22px 0 0;padding:16px 14px 22px;box-sizing:border-box;box-shadow:0 -10px 40px rgba(0,0,0,.2)}
     .date-action-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-    .date-action-title{font-size:18px;font-weight:900}
+    .date-action-title{font-size:calc(18px * var(--fs,1));font-weight:900}
     .date-action-add-head{height:36px;padding:0 14px;border-radius:10px;border:0;background:var(--green);color:#fff;font:inherit;font-weight:800;cursor:pointer}
     .date-action-records{display:grid;gap:6px;margin-bottom:12px}
     .date-action-record{width:100%;border:1px solid #dce8e1;background:#f5faf7;border-radius:10px;padding:10px;text-align:left;cursor:pointer;font:inherit}
-    .date-action-record strong{font-size:14px}
-    .date-action-record span{display:block;margin-top:2px;font-size:11px;color:#527064}
-    .date-action-empty{padding:8px 2px;color:#777;font-size:12px}
+    .date-action-record strong{font-size:calc(14px * var(--fs,1))}
+    .date-action-record span{display:block;margin-top:2px;font-size:calc(11px * var(--fs,1));color:#527064}
+    .date-action-empty{padding:8px 2px;color:#777;font-size:calc(12px * var(--fs,1))}
     .date-action-quick{border-top:1px solid #eee;padding-top:12px}
     .quick-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-    .quick-title-row strong{font-size:16px}
+    .quick-title-row strong{font-size:calc(16px * var(--fs,1))}
     .quick-unit-control{display:grid;grid-template-columns:64px 26px;gap:2px;align-items:stretch}
-    .quick-unit-control input{width:100%;height:34px;text-align:center;border:1px solid #d9e2dd;border-radius:8px;font-size:16px;font-weight:800;background:#fff}
+    .quick-unit-control input{width:100%;height:34px;text-align:center;border:1px solid #d9e2dd;border-radius:8px;font-size:calc(16px * var(--fs,1));font-weight:800;background:#fff}
     .quick-unit-arrows{display:grid;grid-template-rows:1fr 1fr;gap:2px}
-    .quick-unit-arrows button{border:0;background:var(--green);color:#fff;border-radius:4px;font-size:9px;cursor:pointer;padding:0}
+    .quick-unit-arrows button{border:0;background:var(--green);color:#fff;border-radius:4px;font-size:calc(9px * var(--fs,1));cursor:pointer;padding:0}
     .date-action-presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
-    .date-action-preset{border:1px solid #cfe1d8;background:#fff;border-radius:8px;padding:8px 10px;font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+    .date-action-preset{border:1px solid #cfe1d8;background:#fff;border-radius:8px;padding:8px 10px;font:inherit;font-size:calc(12px * var(--fs,1));font-weight:800;cursor:pointer}
     .date-action-preset.already-used{opacity:.5;border-style:dashed}
     
     /* 빠른 휴무 버튼 */
     .dayoff-quick-btn{
       border:1px solid #cfd8dc;background:#edf0f2;color:#37474f;border-radius:8px;
-      padding:8px 12px;font:inherit;font-size:12px;font-weight:800;cursor:pointer;
+      padding:8px 12px;font:inherit;font-size:calc(12px * var(--fs,1));font-weight:800;cursor:pointer;
       display:inline-flex;align-items:center;gap:4px;
     }
     .dayoff-quick-btn:hover{background:#e2e8f0}
     
     .date-action-new{display:flex;gap:6px;width:100%}
-    .date-action-new input{height:40px;border:1px solid #d6e0db;border-radius:10px;padding:0 10px;font:inherit;font-size:12px;box-sizing:border-box}
+    .date-action-new input{height:40px;border:1px solid #d6e0db;border-radius:10px;padding:0 10px;font:inherit;font-size:calc(12px * var(--fs,1));box-sizing:border-box}
     .date-action-new input:first-child{flex:1 1 55%}
     .date-action-new input:last-child{flex:0 1 45%}
 
@@ -177,21 +177,21 @@
     .company-manage-row{display:flex;flex-direction:column;gap:7px;border:1px solid var(--line);border-radius:10px;padding:9px}
     .company-manage-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
     .company-manage-fields{display:grid;grid-template-columns:1fr 1.5fr;gap:6px}
-    .company-manage-fields input,.company-manage-fields textarea{width:100%;box-sizing:border-box;border:1px solid #d6e0db;border-radius:8px;padding:7px 8px;font:inherit;font-size:12px;background:#fff}
+    .company-manage-fields input,.company-manage-fields textarea{width:100%;box-sizing:border-box;border:1px solid #d6e0db;border-radius:8px;padding:7px 8px;font:inherit;font-size:calc(12px * var(--fs,1));background:#fff}
     .company-manage-fields textarea{grid-column:1/-1;min-height:52px;resize:vertical}
     .company-manage-actions{display:flex;justify-content:flex-end;gap:6px}
     @media(max-width:600px){.company-manage-fields{grid-template-columns:1fr}.company-manage-fields textarea{grid-column:auto}}
-    .company-manage-info strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
-    .company-manage-info span{display:block;margin-top:2px;color:var(--muted);font-size:11px}
-    .company-edit{border:1px solid #cfe2d6;border-radius:8px;background:#f7fcf8;color:#246746;padding:6px 8px;font:inherit;font-size:11px;font-weight:700;cursor:pointer}
-    .company-manage-delete{border:1px solid #f0d0cc;border-radius:8px;background:#fff4f3;color:var(--red);padding:6px 8px;font:inherit;font-size:11px;font-weight:700;cursor:pointer}
+    .company-manage-info strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:calc(13px * var(--fs,1))}
+    .company-manage-info span{display:block;margin-top:2px;color:var(--muted);font-size:calc(11px * var(--fs,1))}
+    .company-edit{border:1px solid #cfe2d6;border-radius:8px;background:#f7fcf8;color:#246746;padding:6px 8px;font:inherit;font-size:calc(11px * var(--fs,1));font-weight:700;cursor:pointer}
+    .company-manage-delete{border:1px solid #f0d0cc;border-radius:8px;background:#fff4f3;color:var(--red);padding:6px 8px;font:inherit;font-size:calc(11px * var(--fs,1));font-weight:700;cursor:pointer}
 
     /* 공유 팝업 */
     .share-popup{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:1500}
     .share-popup.open{display:flex}
     .share-popup-box{width:min(92vw,500px);background:#fff;border-radius:18px;padding:18px;box-shadow:0 18px 50px rgba(0,0,0,.25)}
-    .share-popup-title{font-size:18px;font-weight:900;margin:0 0 6px}
-    .share-popup-help{font-size:12px;color:#666;margin-bottom:10px}
+    .share-popup-title{font-size:calc(18px * var(--fs,1));font-weight:900;margin:0 0 6px}
+    .share-popup-help{font-size:calc(12px * var(--fs,1));color:#666;margin-bottom:10px}
     .share-popup-text{width:100%;min-height:220px;border:1px solid #ddd;border-radius:10px;padding:10px;font:600 13px/1.5 inherit;resize:vertical;box-sizing:border-box}
     .share-popup-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:10px}
 
@@ -199,33 +199,33 @@
     #fullscreenStart{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:rgba(244,247,245,.97);padding:20px}
     #fullscreenStart.show{display:flex}
     #fullscreenStart .fs-card{width:min(340px,90vw);background:#fff;border-radius:20px;padding:22px;box-shadow:0 12px 40px rgba(0,0,0,.15);text-align:center}
-    #fullscreenStart .fs-title{font-size:24px;font-weight:900;margin-bottom:8px}
-    #fullscreenStart .fs-desc{font-size:13px;line-height:1.5;color:#666;margin-bottom:16px}
-    #fullscreenStart button{display:block;width:100%;border:0;border-radius:10px;padding:12px;font-size:14px;font-weight:800;margin-top:8px;cursor:pointer}
+    #fullscreenStart .fs-title{font-size:calc(24px * var(--fs,1));font-weight:900;margin-bottom:8px}
+    #fullscreenStart .fs-desc{font-size:calc(13px * var(--fs,1));line-height:1.5;color:#666;margin-bottom:16px}
+    #fullscreenStart button{display:block;width:100%;border:0;border-radius:10px;padding:12px;font-size:calc(14px * var(--fs,1));font-weight:800;margin-top:8px;cursor:pointer}
     #fullscreenStartBtn{background:var(--green);color:#fff}
     #fullscreenSkipBtn{background:#f0f2f1;color:#333}
 
     /* PWA 설치 버튼 */
-    #pwaInstallBottom{display:none;width:100%;margin:12px 0 4px;padding:12px;border:0;border-radius:12px;background:var(--green-dark);color:#fff;font-size:14px;font-weight:800;cursor:pointer}
+    #pwaInstallBottom{display:none;width:100%;margin:12px 0 4px;padding:12px;border:0;border-radius:12px;background:var(--green-dark);color:#fff;font-size:calc(14px * var(--fs,1));font-weight:800;cursor:pointer}
     .pwa-ready #pwaInstallBottom{display:block}
   </style>
 
 <style id="settings-only-css">
-#settingsBtn{width:40px;height:40px;border-radius:50%;font-size:19px;padding:0;box-shadow:0 1px 4px #1d322526}
-#settingsCloseBtn{position:absolute;top:12px;right:12px;width:44px;height:44px;padding:0;font-size:24px}
+#settingsBtn{width:40px;height:40px;border-radius:50%;font-size:calc(19px * var(--fs,1));padding:0;box-shadow:0 1px 4px #1d322526}
+#settingsCloseBtn{position:absolute;top:12px;right:12px;width:44px;height:44px;padding:0;font-size:calc(24px * var(--fs,1))}
 .set-sec{border:1px solid #dce4de;border-radius:12px;padding:12px}
 .set-sec .btn{min-height:40px}
 body.no-paid-border .day.settled-date-cell{border:0!important}
 body{overflow-x:clip}
 .sheet-box{max-height:90vh;max-height:90dvh;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
-.icon-btn{display:inline-flex;align-items:center;justify-content:center;text-align:center;line-height:1;min-width:clamp(30px,9.5vw,40px);height:clamp(30px,9.5vw,40px);padding:0 clamp(6px,2.5vw,12px);font-size:clamp(13px,3.8vw,16px);white-space:nowrap}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;text-align:center;line-height:1;min-width:clamp(30px,9.5vw,40px);height:clamp(30px,9.5vw,40px);padding:0 clamp(6px,2.5vw,12px);font-size:calc(clamp(13px,3.8vw,16px) * var(--fs,1));white-space:nowrap}
 .nav{gap:clamp(3px,1.2vw,5px)}
-.month-title{font-size:clamp(15px,5vw,18px);white-space:nowrap}
+.month-title{font-size:calc(clamp(15px,5vw,18px) * var(--fs,1));white-space:nowrap}
 .btn{min-height:36px}
-.field input,.field select,.field textarea,.company-manage-fields input,.company-manage-fields textarea{font-size:16px!important}
-@media(max-width:360px){.app{padding:10px 8px 28px}.day{min-height:52px}.month-title{font-size:16px}}
+.field input,.field select,.field textarea,.company-manage-fields input,.company-manage-fields textarea{font-size:calc(16px * var(--fs,1))!important}
+@media(max-width:360px){.app{padding:10px 8px 28px}.day{min-height:52px}.month-title{font-size:calc(16px * var(--fs,1))}}
 .date-action-new input{min-width:0;width:100%}
-.date-action-close{width:36px;height:36px;border:0;border-radius:10px;background:#eef2ef;color:var(--ink);font-size:24px;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0}
+.date-action-close{width:36px;height:36px;border:0;border-radius:10px;background:#eef2ef;color:var(--ink);font-size:calc(24px * var(--fs,1));line-height:1;cursor:pointer;display:grid;place-items:center;padding:0}
 .date-action-backdrop,.sheet,.share-popup{overscroll-behavior:contain}
 .date-action-sheet,.sheet-box{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
@@ -275,7 +275,7 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
       </section>
       <section class="card summary">
         <div class="label">이번 달 미수금(미입금)</div>
-        <div class="total" id="monthUnpaid" style="color:var(--red); font-size:18px;">0<small>원</small></div>
+        <div class="total" id="monthUnpaid" style="color:var(--red); font-size:calc(18px * var(--fs,1));">0<small>원</small></div>
       </section>
       <section class="card company-summary">
         <h2 id="companyTitle">업체별 공수 및 정산</h2>
@@ -323,7 +323,7 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
         <span>입금 여부</span>
         <label style="display:flex; align-items:center; gap:6px; margin-top:6px; cursor:pointer;">
           <input id="paidInput" type="checkbox" style="width:18px; height:18px; accent-color:var(--green);">
-          <span style="font-size:13px; font-weight:800;">입금 완료</span>
+          <span style="font-size:calc(13px * var(--fs,1)); font-weight:800;">입금 완료</span>
         </label>
       </label>
       <label class="field full">
@@ -349,7 +349,7 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
       <div class="quick-title-row">
         <div style="display:flex;align-items:center;gap:6px">
           <strong>빠른 입력</strong>
-          <button type="button" class="btn" id="companyManageBtn" style="padding:4px 8px;font-size:11px">업체 관리</button>
+          <button type="button" class="btn" id="companyManageBtn" style="padding:4px 8px;font-size:calc(11px * var(--fs,1))">업체 관리</button>
         </div>
         <div class="quick-unit-control" aria-label="공수">
           <input id="quickUnits" type="text" value="1.0" inputmode="decimal">
@@ -375,7 +375,7 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 <div class="sheet" id="settlementSheet">
   <div class="sheet-box" style="position:relative;">
     <div class="sheet-head-row"><h1 class="sheet-title" style="margin:0;">월별 업체 정산 & 입금 관리</h1></div>
-    <button type="button" class="btn" id="settlementXBtn" aria-label="닫기" style="position:absolute; top:12px; right:12px; width:36px; height:36px; padding:0; font-size:22px; line-height:1; border-radius:50%;">×</button>
+    <button type="button" class="btn" id="settlementXBtn" aria-label="닫기" style="position:absolute; top:12px; right:12px; width:36px; height:36px; padding:0; font-size:calc(22px * var(--fs,1)); line-height:1; border-radius:50%;">×</button>
     <div class="formgrid">
       <label class="field">
         <span>월 선택</span>
@@ -397,41 +397,41 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
     </div>
 
     <div id="settlementResult" style="margin-top:14px; padding:16px; background:#f5faf7; border-radius:12px; border:1px solid #dce8e1; display:none; flex-direction:column; gap:10px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; font-size:15px; font-weight:800; border-bottom:1px solid #cfe2d6; padding-bottom:8px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:calc(15px * var(--fs,1)); font-weight:800; border-bottom:1px solid #cfe2d6; padding-bottom:8px;">
         <span>누적 공수</span>
-        <span style="color:var(--green); font-size:17px;" id="setUnits">0.0공수</span>
+        <span style="color:var(--green); font-size:calc(17px * var(--fs,1));" id="setUnits">0.0공수</span>
       </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:calc(13px * var(--fs,1));">
         <span style="color:var(--muted); font-weight:700;">기본 일당 (세전)</span>
         <span id="setAmount" style="font-weight:700;">0원</span>
       </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:calc(13px * var(--fs,1));">
         <span style="color:var(--muted); font-weight:700;">기타 경비 합산</span>
         <span id="setExpenseAmount" style="font-weight:700;">+ 0원</span>
       </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--red);">
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:calc(13px * var(--fs,1)); color:var(--red);">
         <span style="font-weight:700;" id="setTaxLabel">공제 세액 (3.3%)</span>
         <span id="setTaxAmount" style="font-weight:700;">- 0원</span>
       </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; font-size:15px; font-weight:900; border-top:1px solid #cfe2d6; padding-top:8px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:calc(15px * var(--fs,1)); font-weight:900; border-top:1px solid #cfe2d6; padding-top:8px;">
         <span>최종 수령액 합계</span>
-        <span style="color:var(--ink); font-size:17px;" id="setTaxedAmount">0원</span>
+        <span style="color:var(--ink); font-size:calc(17px * var(--fs,1));" id="setTaxedAmount">0원</span>
       </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; margin-top:4px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:calc(13px * var(--fs,1)); margin-top:4px;">
         <span class="badge-paid">입금 완료</span>
         <span id="setPaidAmount" style="font-weight:800; color:var(--green);">0원</span>
       </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:calc(13px * var(--fs,1));">
         <span class="badge-unpaid">미지급(미수금)</span>
         <span id="setUnpaidAmount" style="font-weight:800; color:var(--red);">0원</span>
       </div>
 
       <!-- 월단위 업체 일괄 입금 관리 버튼 -->
       <div style="display:flex; flex-direction:column; gap:6px; margin-top:10px; padding-top:10px; border-top:1px dashed #cfe2d6;">
-        <button type="button" class="btn primary" id="batchPayBtn" style="padding:10px; font-size:13px; font-weight:800;">
+        <button type="button" class="btn primary" id="batchPayBtn" style="padding:10px; font-size:calc(13px * var(--fs,1)); font-weight:800;">
           ✅ 선택 업체 이번 달 [전체 입금 완료] 처리
         </button>
-        <button type="button" class="btn" id="batchUnpayBtn" style="padding:8px; font-size:12px; color:var(--muted);">
+        <button type="button" class="btn" id="batchUnpayBtn" style="padding:8px; font-size:calc(12px * var(--fs,1)); color:var(--muted);">
           ↩️ 선택 업체 이번 달 [미지급(미수금)]으로 되돌리기
         </button>
       </div>
@@ -474,7 +474,7 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
         <textarea id="exportExtraMessage" placeholder="예: 입금계좌 국민은행 123-456-789012 홍길동
 또는 입금 관련 안내사항을 입력하세요."></textarea>
       </label>
-      <fieldset style="grid-column:1/-1; border:1px solid #dce4de; border-radius:9px; padding:10px; display:flex; flex-wrap:wrap; gap:8px; font-size:12px;">
+      <fieldset style="grid-column:1/-1; border:1px solid #dce4de; border-radius:9px; padding:10px; display:flex; flex-wrap:wrap; gap:8px; font-size:calc(12px * var(--fs,1));">
         <legend style="font-weight:700; padding:0 4px;">포함 항목</legend>
         <label><input id="includeDate" type="checkbox" checked> 날짜</label>
         <label><input id="includeUnits" type="checkbox" checked> 공수</label>
@@ -809,7 +809,7 @@ function renderCompanyTotals(monthRs){
 
   let html = '';
   if(dayOffCount > 0){
-    html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:6px 8px; background:#f1f5f9; border-radius:8px; margin-bottom:6px; font-size:12px;">
+    html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:6px 8px; background:#f1f5f9; border-radius:8px; margin-bottom:6px; font-size:calc(12px * var(--fs,1));">
       <span style="font-weight:800; color:#475569;">🏖️ 이번 달 휴무</span>
       <b style="color:#334155;">총 ${dayOffCount}일</b>
     </div>`;
@@ -819,14 +819,14 @@ function renderCompanyTotals(monthRs){
     html += Object.entries(totals).map(([site, data]) => {
       const afterTax = Math.floor(data.amount * 0.967) + data.expense;
       return `<div style="display:flex; flex-direction:column; gap:4px; padding-bottom:7px; border-bottom:1px solid var(--line);">
-                <div style="display:flex; justify-content:space-between; font-size:12px;">
+                <div style="display:flex; justify-content:space-between; font-size:calc(12px * var(--fs,1));">
                   <span style="font-weight:700;">${escapeHtml(site)}</span>
                   <b style="color:var(--green);">${data.units.toFixed(1)}공수</b>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--muted);">
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:calc(11px * var(--fs,1)); color:var(--muted);">
                   <span>실수령: <b>${afterTax.toLocaleString('ko-KR')}원</b></span>
                   ${data.unpaidAmount > 0 
-                    ? `<button type="button" class="btn danger" style="padding:3px 7px; font-size:10px; font-weight:800;" data-quick-pay-site="${escapeHtml(site)}" title="클릭 시 이번 달 전체 입금 완료 처리">미수금 ${data.unpaidAmount.toLocaleString()}원 [완료처리]</button>` 
+                    ? `<button type="button" class="btn danger" style="padding:3px 7px; font-size:calc(10px * var(--fs,1)); font-weight:800;" data-quick-pay-site="${escapeHtml(site)}" title="클릭 시 이번 달 전체 입금 완료 처리">미수금 ${data.unpaidAmount.toLocaleString()}원 [완료처리]</button>` 
                     : '<span class="badge-paid">전액완납</span>'}
                 </div>
               </div>`;
@@ -1539,9 +1539,7 @@ try {
   const $=id=>document.getElementById(id);
   function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
   function apply(){
-    const app=document.querySelector(".app");
-    app.style.zoom=String(st.font);
-    app.style.width="min("+(100/st.font)+"%,"+(420/st.font)+"px)";
+    document.documentElement.style.setProperty("--fs",String(st.font));
     $("fontSizeValue").textContent=Math.round(st.font*100)+"%";
     $("settingPaidBorder").checked=st.border;
     document.body.classList.toggle("no-paid-border",!st.border);
