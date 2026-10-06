@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="app-version" content="2026.10.06-w">
+  <meta name="app-version" content="2026.10.06-x">
   <meta name="theme-color" content="#16764f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -175,6 +175,8 @@ if(_t==="dark"||(_t==="auto"&&window.matchMedia&&matchMedia("(prefers-color-sche
       display:inline-flex;align-items:center;gap:4px;
     }
     .dayoff-quick-btn:hover{background:#e2e8f0}
+    .quick-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+    .quick-right .dayoff-quick-btn{width:100%;justify-content:center;padding:calc(7px * var(--fs,1)) calc(12px * var(--fs,1))}
     
     .date-action-new{display:flex;gap:6px;width:100%}
     .date-action-new input{height:calc(44px * var(--fs,1));border:1px solid #d6e0db;border-radius:10px;padding:0 10px;font:inherit;font-size:calc(12px * var(--fs,1));box-sizing:border-box}
@@ -365,7 +367,7 @@ html.dark .dayoff-quick-btn:hover{background:#33423b}
         <ul>
           <li>날짜를 누르면 입력창이 열립니다. 그날 기록이 있으면 위에 목록으로 나옵니다.</li>
           <li><b>빠른 입력</b>: 오른쪽 공수(▲▼ 또는 직접 입력)를 정한 뒤, 자주 가는 업체 버튼을 누르면 바로 기록됩니다.</li>
-          <li><b>휴무(0공수)</b> 버튼으로 쉬는 날을 등록합니다. 휴무는 별도 업체가 아니라 <b>가장 최근에 입력한 업체의 0공수</b>로 기록되어, 내보내기·정산에서 그 업체 안에 함께 정리됩니다.</li>
+          <li>공수 입력칸 아래의 <b>휴무</b> 버튼으로 쉬는 날을 등록합니다. 휴무는 별도 업체가 아니라 <b>가장 최근에 입력한 업체의 0공수</b>로 기록되어, 내보내기·정산에서 그 업체 안에 함께 정리됩니다.</li>
           <li>새 업체는 빠른 입력 맨 아래 <b>업체명 · 일당 · 추가</b> 줄에 입력하고 <b>추가</b>를 누르면 기록되고, 다음부터 업체 버튼으로 나타납니다.</li>
                     <li>이미 입력한 기록을 누르면 수정하거나 삭제할 수 있습니다.</li>
         </ul>
@@ -588,12 +590,15 @@ html.dark .dayoff-quick-btn:hover{background:#33423b}
           <strong>빠른 입력</strong>
           <button type="button" class="btn" id="companyManageBtn" style="padding:4px 8px;font-size:calc(11px * var(--fs,1))">업체 관리</button>
         </div>
-        <div class="quick-unit-control" aria-label="공수">
-          <input id="quickUnits" type="text" value="1.0" inputmode="decimal">
-          <div class="quick-unit-arrows">
-            <button type="button" id="quickUnitsUp">▲</button>
-            <button type="button" id="quickUnitsDown">▼</button>
+        <div class="quick-right">
+          <div class="quick-unit-control" aria-label="공수">
+            <input id="quickUnits" type="text" value="1.0" inputmode="decimal">
+            <div class="quick-unit-arrows">
+              <button type="button" id="quickUnitsUp">▲</button>
+              <button type="button" id="quickUnitsDown">▼</button>
+            </div>
           </div>
+          <button type="button" class="dayoff-quick-btn" id="quickDayOffBtn">🏖️ 휴무</button>
         </div>
       </div>
       
@@ -818,7 +823,7 @@ html.dark .dayoff-quick-btn:hover{background:#33423b}
           정산 완료 날짜 검은색 테두리
         </label>
       </section>
-      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.06-w<span id="viewInfo"></span></div>
+      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.06-x<span id="viewInfo"></span></div>
     </div>
   </div>
 </div>
@@ -1132,14 +1137,16 @@ function renderDateActionPopup(){
   
   let dayOffTarget = dayOffSite();
   let isDayOffUsed = hasSameSiteOnDate(selectedDate, dayOffTarget);
-  let dayOffBtnHtml = `<button type="button" class="dayoff-quick-btn ${isDayOffUsed?'already-used':''}" id="quickDayOffBtn">🏖️ 휴무 (0공수)<small style="font-weight:600;opacity:.75"> · ${escapeHtml(dayOffTarget)}</small></button>`;
+  const dayOffBtn = $('quickDayOffBtn');
+  dayOffBtn.classList.toggle('already-used', isDayOffUsed);
+  dayOffBtn.title = `휴무(0공수) · ${dayOffTarget}`;
   
   let presetButtonsHtml = normalized.map(p => {
     let used = hasSameSiteOnDate(selectedDate, p.site);
     return `<button type="button" class="date-action-preset ${used?'already-used':''}" data-date-preset="${p.id}">${escapeHtml(p.site)}</button>`;
   }).join('');
 
-  $('dateActionPresets').innerHTML = dayOffBtnHtml + presetButtonsHtml;
+  $('dateActionPresets').innerHTML = presetButtonsHtml;
 }
 
 function openDateActionPopup(date){
