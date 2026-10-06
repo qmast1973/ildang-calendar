@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="app-version" content="2026.10.06-s">
+  <meta name="app-version" content="2026.10.06-t">
   <meta name="theme-color" content="#16764f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,6 +12,11 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="apple-touch-icon" href="icon-192.png">
+  <script>
+// 화면 모드를 먼저 적용해 깜빡임 방지
+try{var _t=(JSON.parse(localStorage.getItem("ildang_settings_v4")||"{}").theme)||"auto";
+if(_t==="dark"||(_t==="auto"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark");}catch(e){}
+</script>
   <style>
     :root{
       --ink:#18201d;--muted:#69736e;--bg:#e8eeea;--card:#fff;--line:#e5e9e5;
@@ -255,6 +260,69 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .bulk-days label:has(input:checked){background:#ffe9e7;border-color:#e6a49e;color:var(--red)}
 .bulk-preview{margin-top:12px;padding:10px 12px;border-radius:12px;background:#f5faf7;border:1px solid #dce8e1;font-weight:700;font-size:calc(13px * var(--fs,1));line-height:1.5}
 #bulkCloseBtn{position:absolute;top:12px;right:12px;width:calc(44px * var(--fs,1));height:calc(44px * var(--fs,1));padding:0;font-size:calc(24px * var(--fs,1));background:#f1f3f2;border:1.5px solid #c5ccc8;box-shadow:none}
+/* ===== 다크 모드 ===== */
+html.dark{color-scheme:dark;--ink:#e6eee8;--muted:#9fb0a6;--bg:#0c110e;--card:#1b2420;--line:#2d3a34;--light:#1d3a2b;--gray-bg:#2a3430;--gray-text:#b5c3bb;--green:#2f9d6c;--green-dark:#1f7a52;--red:#ff8178;--blue:#6aaeff;--purple:#b992f0;--orange:#f0a24a}
+html.dark body{background:var(--bg);color:var(--ink)}
+html.dark .app{background:#121915}
+html.dark .card,html.dark .calendar{background:var(--card);border-color:var(--line)}
+html.dark .btn{background:#26322c;color:var(--ink);box-shadow:0 1px 3px #0008}
+html.dark .btn:hover{background:#2e3c35}
+html.dark .btn.primary{background:var(--green-dark);color:#fff}
+html.dark .btn.danger{background:#3a2422;color:#ff9a92}
+html.dark .icon-btn{background:#26322c;color:var(--ink);border-color:var(--line)}
+html.dark .day{border-top-color:var(--line)}
+html.dark .day:hover{background:#1f2a25}
+html.dark .sun .date{color:#ff8178}html.dark .sat .date{color:#7db4ff}
+html.dark .week div:first-child{color:#ff8178}html.dark .week div:last-child{color:#7db4ff}
+html.dark .entry{background:#1d3a2b}
+html.dark .entry .site{color:#e6eee8}
+html.dark .entry .pay{color:#6fd3a0}
+html.dark .entry.partial{background:#4a361c}html.dark .entry.partial .pay{color:#f0b765}
+html.dark .entry.manpower-05{background:#1f3d27!important}html.dark .entry.manpower-05 .pay{color:#79d98f!important}
+html.dark .entry.manpower-10{background:#1d3550!important}html.dark .entry.manpower-10 .pay{color:#7dbaff!important}
+html.dark .entry.manpower-15{background:#35294f!important}html.dark .entry.manpower-15 .pay{color:#c3a1f5!important}
+html.dark .entry.manpower-20{background:#4d2626!important}html.dark .entry.manpower-20 .pay{color:#ff958d!important}
+html.dark .entry.dayoff{background:#2a3430!important;border-color:#3b4943!important}
+html.dark .day.settled-date-cell{border-color:#e6eee8!important}
+html.dark .sheet-box,html.dark .date-action-sheet,html.dark .share-popup-box{background:#1b2420;color:var(--ink)}
+html.dark .field input,html.dark .field select,html.dark .field textarea,html.dark .company-manage-fields input,html.dark .company-manage-fields textarea,html.dark .date-action-new input,html.dark .quick-unit-control input,html.dark select,html.dark input[type=text],html.dark input[type=number],html.dark input[type=tel],html.dark input[type=date],html.dark input[type=month],html.dark textarea{background:#121915;color:var(--ink);border-color:#3a4943}
+html.dark ::placeholder{color:#7d8d84}
+html.dark .date-action-record{background:#1f2a25;border-color:#33433b;color:var(--ink)}
+html.dark .date-action-record span{color:#9fb0a6}
+html.dark .date-action-preset{background:#1f2a25;border-color:#3a4943;color:var(--ink)}
+html.dark .date-action-quick{border-top-color:var(--line)}
+html.dark .date-action-close{background:#2a3430;color:var(--ink)}
+html.dark .date-action-empty{color:#9fb0a6}
+html.dark .company-manage-row{border-color:var(--line)}
+html.dark .company-edit{background:#1f3a2b;border-color:#2f5a44;color:#9be0bc}
+html.dark .company-manage-delete{background:#3a2422;border-color:#5a3532;color:#ff9a92}
+html.dark .set-sec,html.dark .help-body details{border-color:#33433b}
+html.dark .help-body ul{color:#cdd9d1}
+html.dark #settingsSheet .btn:not(.primary){background:#1f3a2b;color:#9be0bc;border-color:#2f7a55;box-shadow:0 2px 0 #12261c}
+html.dark #settingsSheet .btn:not(.primary):active{background:#27503a}
+html.dark #settingsSheet .btn.primary{border-color:#2f9d6c;box-shadow:0 3px 0 #0f3a28}
+html.dark #settingsSheet #settingsCloseBtn,html.dark #helpSheet #helpCloseBtn,html.dark #bulkCloseBtn{background:#2a3430;color:var(--ink);border-color:#43524b}
+html.dark #settingsSheet #fileStatusBtn{background:#121915;color:#9fb0a6}
+html.dark #settingsBtn{background:#26322c}
+html.dark .bulk-days label{background:#121915;border-color:#3a4943;color:var(--ink)}
+html.dark .bulk-days label:has(input:checked){background:#4d2626;border-color:#a65a55;color:#ff9a92}
+html.dark .bulk-preview,html.dark #settlementResult{background:#1f2a25!important;border-color:#33433b!important;color:var(--ink)}
+html.dark #settlementResult span[style*="color:var(--ink)"]{color:var(--ink)!important}
+html.dark .badge-paid{background:#1d3a2b;color:#7fe0ab}
+html.dark .badge-unpaid{background:#3a2422;color:#ff9a92}
+html.dark .badge-dayoff{background:#2a3430;color:#b5c3bb}
+html.dark #fullscreenStart{background:rgba(12,17,14,.97)}
+html.dark #fullscreenStart .fs-card{background:#1b2420;color:var(--ink)}
+html.dark #fullscreenStart .fs-desc{color:#9fb0a6}
+html.dark #fullscreenSkipBtn{background:#2a3430;color:var(--ink)}
+html.dark .month-title,html.dark .sheet-title,html.dark .brand{color:var(--ink)}
+html.dark [style*="background:#f1f5f9"]{background:#2a3430!important;color:var(--ink)!important;border-color:#43524b!important}
+html.dark a{color:#7dbaff}
+html.dark .dayoff-quick-btn{background:#2a3430;border-color:#43524b;color:#d5e0d9}
+html.dark .dayoff-quick-btn:hover{background:#33423b}
+.theme-seg{display:flex;gap:6px;margin-top:10px}
+.theme-seg .btn{flex:1}
+#settingsSheet .theme-seg .btn.on{background:var(--green-dark);color:#fff;border-color:var(--green-dark)}
 .help-body details{border:1px solid #dce4de;border-radius:12px;padding:10px 12px;margin-top:8px}
 .help-body summary{cursor:pointer;font-weight:800;font-size:calc(15px * var(--fs,1))}
 .help-body ul{margin:8px 0 2px;padding-left:18px;font-size:calc(13px * var(--fs,1));line-height:1.55;color:#2c3833}
@@ -698,6 +766,14 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
         <button type="button" class="btn" id="openHelpBtn" style="width:100%">❓ 사용 도움말</button>
       </section>
       <section class="set-sec">
+        <strong>화면 모드</strong>
+        <div class="theme-seg" id="themeSeg">
+          <button type="button" class="btn" data-theme="auto">🌗 자동</button>
+          <button type="button" class="btn" data-theme="light">☀️ 라이트</button>
+          <button type="button" class="btn" data-theme="dark">🌙 다크</button>
+        </div>
+      </section>
+      <section class="set-sec">
         <strong>화면 글자 크기</strong>
         <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;">
           <button type="button" class="btn" id="fontDownBtn">A−</button>
@@ -731,7 +807,7 @@ body.modal-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
           정산 완료 날짜 검은색 테두리
         </label>
       </section>
-      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.06-s<span id="viewInfo"></span></div>
+      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.06-t<span id="viewInfo"></span></div>
     </div>
   </div>
 </div>
@@ -1714,11 +1790,15 @@ try {
 <script id="settings-only-js">
 (function(){
   const KEY="ildang_settings_v4";
-  let st={font:1,border:true,hideSummary:false};
+  let st={font:1,border:true,hideSummary:false,theme:"auto"};
   try{st=Object.assign(st,JSON.parse(localStorage.getItem(KEY)||"{}"));}catch(e){}
   const $=id=>document.getElementById(id);
   function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
   function apply(){
+    var dk=st.theme==="dark"||(st.theme!=="light"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches);
+    document.documentElement.classList.toggle("dark",dk);
+    var tc=document.querySelector('meta[name="theme-color"]'); if(tc) tc.content=dk?"#0c110e":"#16764f";
+    document.querySelectorAll("#themeSeg .btn").forEach(function(b){b.classList.toggle("on",b.dataset.theme===st.theme);});
     var w=window.innerWidth||360;
     var base=w<=1100?Math.min(2.4,Math.max(1,w/390)):1;
     document.documentElement.style.setProperty("--base",String(Math.round(base*100)/100));
@@ -1741,6 +1821,8 @@ try {
   $("fontDownBtn").onclick=()=>{st.font=Math.max(.9,Math.round((st.font-.05)*20)/20);save();apply();};
   $("fontUpBtn").onclick=()=>{st.font=Math.min(1.3,Math.round((st.font+.05)*20)/20);save();apply();};
   $("fontResetBtn").onclick=()=>{st.font=1;save();apply();};
+  $("themeSeg").addEventListener("click",function(e){var b=e.target.closest("[data-theme]");if(!b)return;st.theme=b.dataset.theme;save();apply();});
+  if(window.matchMedia){try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",apply);}catch(e){}}
   $("settingHideSummary").onchange=e=>{st.hideSummary=e.target.checked;save();apply();};
   $("settingPaidBorder").onchange=e=>{st.border=e.target.checked;save();apply();};
   $("openHelpBtn").onclick=()=>{close();$("helpSheet").classList.add("open");};
