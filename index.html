@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="app-version" content="2026.10.06-v">
+  <meta name="app-version" content="2026.10.06-w">
   <meta name="theme-color" content="#16764f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -178,8 +178,9 @@ if(_t==="dark"||(_t==="auto"&&window.matchMedia&&matchMedia("(prefers-color-sche
     
     .date-action-new{display:flex;gap:6px;width:100%}
     .date-action-new input{height:calc(44px * var(--fs,1));border:1px solid #d6e0db;border-radius:10px;padding:0 10px;font:inherit;font-size:calc(12px * var(--fs,1));box-sizing:border-box}
-    .date-action-new input:first-child{flex:1 1 55%}
-    .date-action-new input:last-child{flex:0 1 45%}
+    .date-action-new input:first-child{flex:1.2 1 0;min-width:0}
+    .date-action-new input:nth-child(2){flex:1 1 0;min-width:0}
+    .date-action-new .date-action-add-head{flex:none;height:calc(44px * var(--fs,1));padding:0 calc(16px * var(--fs,1));font-size:calc(14px * var(--fs,1));white-space:nowrap}
 
     /* 업체 관리 */
     .company-manage-list{display:flex;flex-direction:column;gap:6px;max-height:50vh;overflow-y:auto}
@@ -365,9 +366,8 @@ html.dark .dayoff-quick-btn:hover{background:#33423b}
           <li>날짜를 누르면 입력창이 열립니다. 그날 기록이 있으면 위에 목록으로 나옵니다.</li>
           <li><b>빠른 입력</b>: 오른쪽 공수(▲▼ 또는 직접 입력)를 정한 뒤, 자주 가는 업체 버튼을 누르면 바로 기록됩니다.</li>
           <li><b>휴무(0공수)</b> 버튼으로 쉬는 날을 등록합니다. 휴무는 별도 업체가 아니라 <b>가장 최근에 입력한 업체의 0공수</b>로 기록되어, 내보내기·정산에서 그 업체 안에 함께 정리됩니다.</li>
-          <li>새 업체는 업체명과 일당 금액을 입력해 추가합니다. 추가한 업체는 다음부터 버튼으로 나타납니다.</li>
-          <li><b>직접 추가</b>를 누르면 일당, 공수, 식대·유류비 등 경비까지 자세히 입력할 수 있습니다.</li>
-          <li>이미 입력한 기록을 누르면 수정하거나 삭제할 수 있습니다.</li>
+          <li>새 업체는 빠른 입력 맨 아래 <b>업체명 · 일당 · 추가</b> 줄에 입력하고 <b>추가</b>를 누르면 기록되고, 다음부터 업체 버튼으로 나타납니다.</li>
+                    <li>이미 입력한 기록을 누르면 수정하거나 삭제할 수 있습니다.</li>
         </ul>
       </details>
       <details><summary>🏢 업체 관리</summary>
@@ -578,7 +578,6 @@ html.dark .dayoff-quick-btn:hover{background:#33423b}
     <div class="date-action-head">
       <div class="date-action-title" id="dateActionTitle">날짜 입력</div>
       <div style="display:flex;align-items:center;gap:8px;">
-        <button type="button" class="date-action-add-head" id="dateActionAdd">직접 추가</button>
         <button type="button" class="date-action-close" id="dateActionCloseBtn" aria-label="닫기">×</button>
       </div>
     </div>
@@ -603,7 +602,8 @@ html.dark .dayoff-quick-btn:hover{background:#33423b}
       
       <div class="date-action-new">
         <input id="dateActionSite" type="text" placeholder="업체명">
-        <input id="dateActionRate" type="number" min="0" step="1000" placeholder="일당 금액(원)">
+        <input id="dateActionRate" type="number" min="0" step="1000" placeholder="일당(원)" inputmode="numeric">
+        <button type="button" class="date-action-add-head" id="dateActionAdd">추가</button>
       </div>
     </div>
   </div>
@@ -818,7 +818,7 @@ html.dark .dayoff-quick-btn:hover{background:#33423b}
           정산 완료 날짜 검은색 테두리
         </label>
       </section>
-      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.06-v<span id="viewInfo"></span></div>
+      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.06-w<span id="viewInfo"></span></div>
     </div>
   </div>
 </div>
@@ -1538,6 +1538,8 @@ $('dateActionAdd').onclick = () => {
   render();
   closeDateActionPopup();
 };
+
+['dateActionSite','dateActionRate'].forEach(id => $(id).addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); $('dateActionAdd').click(); } }));
 
 // 업체 관리
 $('companyManageBtn').onclick = () => { closeDateActionPopup(); openCompanyManage(); };
