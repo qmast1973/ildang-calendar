@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="app-version" content="2026.10.06-u">
+  <meta name="app-version" content="2026.10.06-v">
   <meta name="theme-color" content="#16764f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -364,7 +364,7 @@ html.dark .dayoff-quick-btn:hover{background:#33423b}
         <ul>
           <li>날짜를 누르면 입력창이 열립니다. 그날 기록이 있으면 위에 목록으로 나옵니다.</li>
           <li><b>빠른 입력</b>: 오른쪽 공수(▲▼ 또는 직접 입력)를 정한 뒤, 자주 가는 업체 버튼을 누르면 바로 기록됩니다.</li>
-          <li><b>휴무(0공수)</b> 버튼으로 쉬는 날을 등록합니다.</li>
+          <li><b>휴무(0공수)</b> 버튼으로 쉬는 날을 등록합니다. 휴무는 별도 업체가 아니라 <b>가장 최근에 입력한 업체의 0공수</b>로 기록되어, 내보내기·정산에서 그 업체 안에 함께 정리됩니다.</li>
           <li>새 업체는 업체명과 일당 금액을 입력해 추가합니다. 추가한 업체는 다음부터 버튼으로 나타납니다.</li>
           <li><b>직접 추가</b>를 누르면 일당, 공수, 식대·유류비 등 경비까지 자세히 입력할 수 있습니다.</li>
           <li>이미 입력한 기록을 누르면 수정하거나 삭제할 수 있습니다.</li>
@@ -818,7 +818,7 @@ html.dark .dayoff-quick-btn:hover{background:#33423b}
           정산 완료 날짜 검은색 테두리
         </label>
       </section>
-      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.06-u<span id="viewInfo"></span></div>
+      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.06-v<span id="viewInfo"></span></div>
     </div>
   </div>
 </div>
@@ -941,6 +941,21 @@ function formatDateActionDate(d){
   return `${y}년 ${Number(m)}월 ${Number(day)}일`;
 }
 
+// 휴무 판정: 0공수·0원 기록 (예전 방식의 '휴무' 업체명 기록 포함)
+function isDayOff(r){ return r.site === '휴무' || ((Number(r.units)||0) === 0 && (Number(r.rate)||0) === 0 && !(Number(r.expense)||0)); }
+// 휴무를 기록할 업체: 가장 최근에 입력한 업체 (없으면 최근 사용 프리셋, 그것도 없으면 '휴무')
+function dayOffSite(){
+  for(let i = records.length - 1; i >= 0; i--){ if(!isDayOff(records[i])) return records[i].site; }
+  const p = presets.slice().sort((a,b) => (b.lastUsed||0) - (a.lastUsed||0))[0];
+  return p ? p.site : '휴무';
+}
+// 내보내기용 업체명: 예전 '휴무' 업체 기록은 날짜가 가장 가까운 실제 업체로 분류
+function exportSiteOf(r){
+  if(r.site !== '휴무') return r.site;
+  let best = null, bd = Infinity;
+  records.forEach(x => { if(x.site !== '휴무'){ const d = Math.abs(new Date(x.date) - new Date(r.date)); if(d < bd){ bd = d; best = x.site; } } });
+  return best || r.site;
+}
 function amount(r){ return (Number(r.rate) || 0) * (Number(r.units) || 0); }
 function totalPay(r){ return amount(r) + (Number(r.expense) || 0); }
 function sameSite(a,b){ return String(a||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('ko-KR') === String(b||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('ko-KR'); }
@@ -1024,7 +1039,7 @@ function render(){
   let units = monthRs.reduce((s,r) => s + Number(r.units || 0), 0);
   $('monthTotal').innerHTML = `${units.toFixed(1)}<small>공수</small>`;
   
-  let unpaidTotal = monthRs.filter(r => !r.paid && r.site !== '휴무').reduce((s,r) => {
+  let unpaidTotal = monthRs.filter(r => !r.paid && !isDayOff(r)).reduce((s,r) => {
     const gross = amount(r);
     const exp = Number(r.expense) || 0;
     return s + Math.floor(gross * 0.967) + exp;
@@ -1040,7 +1055,7 @@ function renderCompanyTotals(monthRs){
   let dayOffCount = 0;
   
   monthRs.forEach(r => {
-    if(r.site === '휴무'){
+    if(isDayOff(r)){
       dayOffCount++;
       return;
     }
@@ -1101,22 +1116,23 @@ function renderDateActionPopup(){
   
   $('dateActionRecords').innerHTML = rs.length
     ? rs.map(r => {
-        let isDayOff = r.site === '휴무';
+        const dayOff = isDayOff(r);
         return `
-        <button type="button" class="date-action-record" data-date-record="${r.id}" style="${isDayOff?'background:#f1f5f9; border-color:#cbd5e1;':''}">
+        <button type="button" class="date-action-record" data-date-record="${r.id}" style="${dayOff?'background:#f1f5f9; border-color:#cbd5e1;':''}">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <strong>${isDayOff ? '🏖️ 휴무' : escapeHtml(r.site)}</strong>
-            <span class="${isDayOff ? 'badge-dayoff' : (r.paid ? 'badge-paid' : 'badge-unpaid')}">${isDayOff ? '휴무' : (r.paid ? '입금완료' : '미지급')}</span>
+            <strong>${dayOff ? '🏖️ 휴무' + (r.site !== '휴무' ? ' · ' + escapeHtml(r.site) : '') : escapeHtml(r.site)}</strong>
+            <span class="${dayOff ? 'badge-dayoff' : (r.paid ? 'badge-paid' : 'badge-unpaid')}">${dayOff ? '휴무' : (r.paid ? '입금완료' : '미지급')}</span>
           </div>
-          <span>${r.units}공수 · ${isDayOff ? '휴식일' : '단가 ' + Number(r.rate).toLocaleString() + '원' + (r.expense ? ' · 경비 ' + Number(r.expense).toLocaleString() + '원' : '') + ' · 합계 ' + totalPay(r).toLocaleString() + '원'}</span>
+          <span>${r.units}공수 · ${dayOff ? '휴식일' : '단가 ' + Number(r.rate).toLocaleString() + '원' + (r.expense ? ' · 경비 ' + Number(r.expense).toLocaleString() + '원' : '') + ' · 합계 ' + totalPay(r).toLocaleString() + '원'}</span>
         </button>`;
       }).join('')
     : '<div class="date-action-empty">등록된 작업이 없습니다.</div>';
     
   let normalized = presets.slice().sort((a,b) => (b.lastUsed||0) - (a.lastUsed||0));
   
-  let isDayOffUsed = hasSameSiteOnDate(selectedDate, '휴무');
-  let dayOffBtnHtml = `<button type="button" class="dayoff-quick-btn ${isDayOffUsed?'already-used':''}" id="quickDayOffBtn">🏖️ 휴무 (0공수)</button>`;
+  let dayOffTarget = dayOffSite();
+  let isDayOffUsed = hasSameSiteOnDate(selectedDate, dayOffTarget);
+  let dayOffBtnHtml = `<button type="button" class="dayoff-quick-btn ${isDayOffUsed?'already-used':''}" id="quickDayOffBtn">🏖️ 휴무 (0공수)<small style="font-weight:600;opacity:.75"> · ${escapeHtml(dayOffTarget)}</small></button>`;
   
   let presetButtonsHtml = normalized.map(p => {
     let used = hasSameSiteOnDate(selectedDate, p.site);
@@ -1168,14 +1184,15 @@ function closeSheet(){ $('sheet').classList.remove('open'); }
 
 // [휴무 등록 로직]
 function addDayOffRecord(){
-  if(hasSameSiteOnDate(selectedDate, '휴무')){
-    alert(`"${formatDateActionDate(selectedDate)}"에는 이미 휴무가 등록되어 있습니다.`);
+  const site = dayOffSite();
+  if(hasSameSiteOnDate(selectedDate, site)){
+    alert(`"${formatDateActionDate(selectedDate)}"에는 "${site}" 기록이 이미 있습니다.`);
     return;
   }
   records.push({
     id: generateId(),
     date: selectedDate,
-    site: '휴무',
+    site: site,
     rate: 0,
     units: 0,
     expense: 0,
@@ -1192,7 +1209,7 @@ function batchSetPaidStatus(monthVal, siteVal, paidStatus) {
   if(!monthVal) return;
   let count = 0;
   records.forEach(r => {
-    if(r.site !== '휴무' && (!siteVal || r.site === siteVal) && r.date.startsWith(monthVal)) {
+    if(!isDayOff(r) && (!siteVal || r.site === siteVal) && r.date.startsWith(monthVal)) {
       r.paid = paidStatus;
       count++;
     }
@@ -1241,7 +1258,7 @@ function updateSettlementResult() {
     return;
   }
   
-  const filtered = records.filter(r => r.site !== '휴무' && (!siteVal || r.site === siteVal) && r.date.startsWith(monthVal));
+  const filtered = records.filter(r => !isDayOff(r) && (!siteVal || r.site === siteVal) && r.date.startsWith(monthVal));
   let tUnits = 0, tAmount = 0, tExpense = 0, tPaid = 0, tUnpaid = 0;
   
   filtered.forEach(r => {
@@ -1351,7 +1368,7 @@ function buildExportData(){
     amountTotal: $('includeAmountTotal').checked
   };
   
-  let filtered = records.filter(r => (!company || r.site === company) && r.date >= start && r.date <= end)
+  let filtered = records.map(r => ({...r, site: exportSiteOf(r), dayOff: isDayOff(r)})).filter(r => (!company || r.site === company) && r.date >= start && r.date <= end)
                         .sort((a,b) => a.date.localeCompare(b.date) || a.site.localeCompare(b.site));
                         
   if(!filtered.length) return { format, content: null, message: '선택한 기간에 기록이 없습니다.' };
@@ -1366,7 +1383,7 @@ function buildExportData(){
     filtered.forEach(r => {
       let row = [r.site];
       if(flags.date) row.push(r.date);
-      if(flags.units) row.push(Number(r.units).toFixed(1));
+      if(flags.units) row.push(r.dayOff ? '0.0 (휴무)' : Number(r.units).toFixed(1));
       row.push(r.memo || '');
       rows.push(row);
     });
@@ -1391,7 +1408,7 @@ function buildExportData(){
     rs.forEach(r => {
       let parts = [];
       if(flags.date) parts.push(r.date);
-      if(flags.units) parts.push(`${Number(r.units).toFixed(1)}공수`);
+      if(flags.units) parts.push(r.dayOff ? '0.0공수 (휴무)' : `${Number(r.units).toFixed(1)}공수`);
       lines.push(parts.join('  '));
     });
     if(flags.amountTotal){
@@ -1607,7 +1624,7 @@ document.addEventListener('click', e => {
 // 내보내기 제출
 $('exportCancel').onclick = closeExport;
 $('exportCompanyButton').onclick = () => {
-  let sites = [...new Set(records.map(r => r.site))].sort();
+  let sites = [...new Set(records.map(r => exportSiteOf(r)))].sort();
   $('exportCompanies').innerHTML = `<button class="btn" type="button" data-sel-site="" style="text-align:left; padding:10px;">전체 업체</button>` +
     sites.map(s => `<button class="btn" type="button" data-sel-site="${escapeHtml(s)}" style="text-align:left; padding:10px;">${escapeHtml(s)}</button>`).join('');
   $('exportCompanySheet').classList.add('open');
@@ -1859,15 +1876,15 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
     if(mode==='del'){
       var names=[]; records.forEach(function(r){ if(r.site!=='휴무' && names.indexOf(r.site)<0) names.push(r.site); });
       names.sort();
-      $('bulkSite').innerHTML='<option value="'+ALL+'">전체 업체 (휴무 포함)</option>'+names.map(function(n){return '<option value="s:'+escapeHtml(n)+'">'+escapeHtml(n)+'</option>';}).join('')+'<option value="'+OFF+'">🏖️ 휴무만</option>';
+      $('bulkSite').innerHTML='<option value="'+ALL+'">전체 업체 (휴무 포함)</option>'+names.map(function(n){return '<option value="s:'+escapeHtml(n)+'">'+escapeHtml(n)+'</option>';}).join('')+'<option value="'+OFF+'">🏖️ 휴무(0공수)만</option>';
       return;
     }
     var opts=presets.slice().sort(function(a,b){return (b.lastUsed||0)-(a.lastUsed||0);}).map(function(p){return '<option value="'+p.id+'">'+escapeHtml(p.site)+'</option>';});
-    $('bulkSite').innerHTML=opts.join('')+'<option value="'+OFF+'">🏖️ 휴무 (0공수)</option><option value="'+NEW+'">＋ 새 업체 직접 입력</option>';
+    $('bulkSite').innerHTML=opts.join('')+'<option value="'+OFF+'">🏖️ 휴무 (0공수) · 최근 업체</option><option value="'+NEW+'">＋ 새 업체 직접 입력</option>';
   }
   function siteInfo(){
     var v=$('bulkSite').value;
-    if(v===OFF) return {site:'휴무',rate:0,units:0,off:true};
+    if(v===OFF) return {site:dayOffSite(),rate:0,units:0,off:true};
     if(v===NEW) return {site:$('bulkSiteNew').value.trim().replace(/\s+/g,' '),rate:+$('bulkRate').value||0,units:+$('bulkUnits').value||0};
     var p=presets.find(function(x){return x.id===v;});
     return {site:p?p.site:'',rate:+$('bulkRate').value||0,units:+$('bulkUnits').value||0};
@@ -1890,7 +1907,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
     return records.filter(function(r){
       if(!set[r.date]) return false;
       if(v===ALL) return true;
-      if(v===OFF) return r.site==='휴무';
+      if(v===OFF) return isDayOff(r);
       return v.indexOf('s:')===0 && r.site===v.slice(2).replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"');
     });
   }
@@ -1911,7 +1928,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
     if(!info.site){el.textContent='업체명을 입력해 주세요.';return null;}
     var add=ds.filter(function(d){return !hasSameSiteOnDate(d,info.site);});
     var skipN=ds.length-add.length;
-    el.textContent=(info.off?'휴무 ':'“'+info.site+'” '+info.units+'공수 ')+add.length+'일 입력'+(skipN?' · 이미 등록된 '+skipN+'일은 건너뜀':'');
+    el.textContent=(info.off?'휴무(0공수) · '+info.site+' ':'“'+info.site+'” '+info.units+'공수 ')+add.length+'일 입력'+(skipN?' · 이미 등록된 '+skipN+'일은 건너뜀':'');
     btn.disabled=!add.length;
     return {info:info,add:add};
   }
