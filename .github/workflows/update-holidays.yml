@@ -1,0 +1,29 @@
+name: update-holidays
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"   # 매주 월요일 (임시공휴일 등 반영)
+  workflow_dispatch:        # 수동 실행
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --upgrade holidays
+      - run: python scripts/update_holidays.py
+      - name: 변경이 있으면 커밋
+        run: |
+          if [ -n "$(git status --porcelain holidays.json)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add holidays.json
+            git commit -m "공휴일 데이터 자동 갱신"
+            git push
+          fi
