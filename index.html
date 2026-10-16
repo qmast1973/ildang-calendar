@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="app-version" content="2026.10.06-x">
+  <meta name="app-version" content="2026.10.16-y">
   <meta name="theme-color" content="#16764f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -332,6 +332,18 @@ html.dark .dayoff-quick-btn:hover{background:#33423b}
 .theme-seg{display:flex;gap:6px;margin-top:10px}
 .theme-seg .btn{flex:1}
 #settingsSheet .theme-seg .btn.on{background:var(--green-dark);color:#fff;border-color:var(--green-dark)}
+.quick-memo-toggle{display:inline-flex;align-items:center;gap:6px;margin:2px 0 8px;padding:calc(7px * var(--fs,1)) calc(12px * var(--fs,1));border:1.5px dashed #9bb8a8;border-radius:10px;background:transparent;color:var(--green-dark);font:inherit;font-weight:800;font-size:calc(12px * var(--fs,1));cursor:pointer}
+.quick-memo-toggle.on{background:#e9f4ee;border-style:solid}
+.quick-memo{display:block;width:100%;box-sizing:border-box;margin:0 0 8px;padding:10px;border:1px solid #d6e0db;border-radius:10px;font:inherit;font-size:calc(14px * var(--fs,1));resize:vertical;min-height:calc(60px * var(--fs,1))}
+.quick-memo[hidden],.rec-memo[hidden]{display:none!important}
+.rec-wrap{display:flex;flex-direction:column;gap:4px}
+.rec-memo-toggle{align-self:flex-start;border:0;background:transparent;color:var(--green-dark);font:inherit;font-weight:800;font-size:calc(12px * var(--fs,1));padding:2px 6px;cursor:pointer}
+.rec-memo{margin:0 0 2px;padding:8px 10px;border-radius:8px;background:#fffbe8;border:1px solid #efe3a8;font-size:calc(13px * var(--fs,1));line-height:1.5;white-space:pre-wrap;word-break:break-word}
+html.dark .quick-memo-toggle.on{background:#1f3a2b}
+html.dark .quick-memo{background:#121915;color:var(--ink);border-color:#3a4943}
+html.dark .rec-memo{background:#3a3418;border-color:#5a5026;color:#f3ecc0}
+html.dark .quick-memo-toggle{color:#9be0bc;border-color:#3f6a53}
+html.dark .rec-memo-toggle{color:#9be0bc}
 .help-body details{border:1px solid #dce4de;border-radius:12px;padding:10px 12px;margin-top:8px}
 .help-body summary{cursor:pointer;font-weight:800;font-size:calc(15px * var(--fs,1))}
 .help-body ul{margin:8px 0 2px;padding-left:18px;font-size:calc(13px * var(--fs,1));line-height:1.55;color:#2c3833}
@@ -368,6 +380,7 @@ html.dark .dayoff-quick-btn:hover{background:#33423b}
           <li>날짜를 누르면 입력창이 열립니다. 그날 기록이 있으면 위에 목록으로 나옵니다.</li>
           <li><b>빠른 입력</b>: 오른쪽 공수(▲▼ 또는 직접 입력)를 정한 뒤, 자주 가는 업체 버튼을 누르면 바로 기록됩니다.</li>
           <li>공수 입력칸 아래의 <b>휴무</b> 버튼으로 쉬는 날을 등록합니다. 휴무는 별도 업체가 아니라 <b>가장 최근에 입력한 업체의 0공수</b>로 기록되어, 내보내기·정산에서 그 업체 안에 함께 정리됩니다.</li>
+          <li><b>📝 메모</b>를 누르면 메모칸이 열립니다. 적어 두면 업체 버튼·휴무·추가로 기록할 때 함께 저장되고, 평소에는 접혀 있습니다. 메모가 있는 기록은 날짜 입력창 목록에서 <b>📝 메모 보기</b>를 눌러야 내용이 보입니다.</li>
           <li>새 업체는 빠른 입력 맨 아래 <b>업체명 · 일당 · 추가</b> 줄에 입력하고 <b>추가</b>를 누르면 기록되고, 다음부터 업체 버튼으로 나타납니다.</li>
                     <li>이미 입력한 기록을 누르면 수정하거나 삭제할 수 있습니다.</li>
         </ul>
@@ -605,6 +618,9 @@ html.dark .dayoff-quick-btn:hover{background:#33423b}
       <!-- 업체 프리셋 및 휴무 빠른등록 버튼 -->
       <div class="date-action-presets" id="dateActionPresets"></div>
       
+      <button type="button" class="quick-memo-toggle" id="quickMemoToggle" aria-expanded="false">📝 메모 <span id="quickMemoHint"></span></button>
+      <textarea id="quickMemo" class="quick-memo" rows="2" placeholder="이 기록에 남길 메모 (업체 버튼·휴무·추가 시 함께 저장)" hidden></textarea>
+
       <div class="date-action-new">
         <input id="dateActionSite" type="text" placeholder="업체명">
         <input id="dateActionRate" type="number" min="0" step="1000" placeholder="일당(원)" inputmode="numeric">
@@ -823,7 +839,7 @@ html.dark .dayoff-quick-btn:hover{background:#33423b}
           정산 완료 날짜 검은색 테두리
         </label>
       </section>
-      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.06-x<span id="viewInfo"></span></div>
+      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.16-y<span id="viewInfo"></span></div>
     </div>
   </div>
 </div>
@@ -960,6 +976,14 @@ function exportSiteOf(r){
   let best = null, bd = Infinity;
   records.forEach(x => { if(x.site !== '휴무'){ const d = Math.abs(new Date(x.date) - new Date(r.date)); if(d < bd){ bd = d; best = x.site; } } });
   return best || r.site;
+}
+function takeQuickMemo(){
+  const el = $('quickMemo'); if(!el) return '';
+  const v = el.value.trim();
+  el.value = ''; el.hidden = true;
+  const t = $('quickMemoToggle'); if(t){ t.classList.remove('on'); t.setAttribute('aria-expanded','false'); }
+  const h = $('quickMemoHint'); if(h) h.textContent = '';
+  return v;
 }
 function amount(r){ return (Number(r.rate) || 0) * (Number(r.units) || 0); }
 function totalPay(r){ return amount(r) + (Number(r.expense) || 0); }
@@ -1123,13 +1147,13 @@ function renderDateActionPopup(){
     ? rs.map(r => {
         const dayOff = isDayOff(r);
         return `
-        <button type="button" class="date-action-record" data-date-record="${r.id}" style="${dayOff?'background:#f1f5f9; border-color:#cbd5e1;':''}">
+        <div class="rec-wrap"><button type="button" class="date-action-record" data-date-record="${r.id}" style="${dayOff?'background:#f1f5f9; border-color:#cbd5e1;':''}">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <strong>${dayOff ? '🏖️ 휴무' + (r.site !== '휴무' ? ' · ' + escapeHtml(r.site) : '') : escapeHtml(r.site)}</strong>
             <span class="${dayOff ? 'badge-dayoff' : (r.paid ? 'badge-paid' : 'badge-unpaid')}">${dayOff ? '휴무' : (r.paid ? '입금완료' : '미지급')}</span>
           </div>
           <span>${r.units}공수 · ${dayOff ? '휴식일' : '단가 ' + Number(r.rate).toLocaleString() + '원' + (r.expense ? ' · 경비 ' + Number(r.expense).toLocaleString() + '원' : '') + ' · 합계 ' + totalPay(r).toLocaleString() + '원'}</span>
-        </button>`;
+        </button>${r.memo ? `<button type="button" class="rec-memo-toggle" data-memo-toggle="${r.id}">📝 메모 보기</button><div class="rec-memo" hidden>${escapeHtml(r.memo)}</div>` : ''}</div>`;
       }).join('')
     : '<div class="date-action-empty">등록된 작업이 없습니다.</div>';
     
@@ -1151,6 +1175,7 @@ function renderDateActionPopup(){
 
 function openDateActionPopup(date){
   selectedDate = date;
+  takeQuickMemo();
   const first = records.find(r => r.date === date);
   setQuickUnits(first?.units ?? 1);
   renderDateActionPopup();
@@ -1204,7 +1229,7 @@ function addDayOffRecord(){
     units: 0,
     expense: 0,
     paid: true,
-    memo: ''
+    memo: takeQuickMemo()
   });
   save();
   render();
@@ -1510,7 +1535,7 @@ document.addEventListener('click', e => {
       units,
       expense: 0,
       paid: false,
-      memo: ''
+      memo: takeQuickMemo()
     });
     save();
     render();
@@ -1538,7 +1563,7 @@ $('dateActionAdd').onclick = () => {
     p.lastUsed = Date.now();
   }
   
-  records.push({id: generateId(), date: selectedDate, site: p.site, rate, units, expense:0, paid:false, memo:''});
+  records.push({id: generateId(), date: selectedDate, site: p.site, rate, units, expense:0, paid:false, memo: takeQuickMemo()});
   save();
   siteEl.value = '';
   rateEl.value = '';
@@ -1547,6 +1572,22 @@ $('dateActionAdd').onclick = () => {
 };
 
 ['dateActionSite','dateActionRate'].forEach(id => $(id).addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); $('dateActionAdd').click(); } }));
+
+$('quickMemoToggle').addEventListener('click', () => {
+  const el = $('quickMemo'), t = $('quickMemoToggle');
+  el.hidden = !el.hidden;
+  t.classList.toggle('on', !el.hidden);
+  t.setAttribute('aria-expanded', String(!el.hidden));
+  if(!el.hidden) el.focus();
+});
+$('quickMemo').addEventListener('input', () => { $('quickMemoHint').textContent = $('quickMemo').value.trim() ? '· 작성됨' : ''; });
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-memo-toggle]');
+  if(!t) return;
+  const body = t.nextElementSibling;
+  body.hidden = !body.hidden;
+  t.textContent = body.hidden ? '📝 메모 보기' : '📝 메모 접기';
+});
 
 // 업체 관리
 $('companyManageBtn').onclick = () => { closeDateActionPopup(); openCompanyManage(); };
