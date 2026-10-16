@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="app-version" content="2026.10.16-y">
+  <meta name="app-version" content="2026.10.16-z">
   <meta name="theme-color" content="#16764f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -70,7 +70,8 @@ if(_t==="dark"||(_t==="auto"&&window.matchMedia&&matchMedia("(prefers-color-sche
     .day.selected-date-cell{outline:3px solid var(--green)!important;outline-offset:-3px!important;border-radius:10px!important;z-index:5}
     .day.settled-date-cell{border:3px solid #000!important;box-sizing:border-box;border-radius:10px!important;z-index:4}
     .date{font-size:calc(12px * var(--fs,1));font-weight:700}
-    .sun .date{color:var(--red)}
+    .sun .date,.holiday .date{color:var(--red)}
+    .hname{font-size:calc(9px * var(--fs,1));font-weight:800;color:var(--red);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:1px 0 0}
     .sat .date{color:#3770ae}
     .today .date{background:var(--green);color:#fff;width:calc(20px * var(--fs,1));height:calc(20px * var(--fs,1));display:grid;place-items:center;border-radius:50%;margin-top:-2px}
     
@@ -281,7 +282,8 @@ html.dark .btn.danger{background:#3a2422;color:#ff9a92}
 html.dark .icon-btn{background:#26322c;color:var(--ink);border-color:var(--line)}
 html.dark .day{border-top-color:var(--line)}
 html.dark .day:hover{background:#1f2a25}
-html.dark .sun .date{color:#ff8178}html.dark .sat .date{color:#7db4ff}
+html.dark .sun .date,html.dark .holiday .date{color:#ff8178}
+html.dark .hname{color:#ff8178}html.dark .sat .date{color:#7db4ff}
 html.dark .week div:first-child{color:#ff8178}html.dark .week div:last-child{color:#7db4ff}
 html.dark .entry{background:#1d3a2b}
 html.dark .entry .site{color:#e6eee8}
@@ -362,6 +364,7 @@ html.dark .rec-memo-toggle{color:#9be0bc}
           <li>화면을 좌우로 쓸어 넘기거나 ‹ › 버튼으로 달을 바꿉니다. <b>오늘</b> 버튼은 이번 달로 돌아옵니다.</li>
           <li>날짜 칸에는 그날 일한 업체명과 공수가 표시됩니다. 공수에 따라 칸 색이 달라집니다. (0.5 초록 / 1.0 파랑 / 1.5 보라 / 2.0 빨강, 휴무는 회색)</li>
           <li>하루에 기록이 3건 이상이면 두 건만 보이고 “+N건”으로 표시됩니다.</li>
+          <li>국경일·공휴일(설날·추석 연휴, 대체공휴일 포함)은 날짜가 빨간색으로 표시되고 아래에 이름이 나옵니다.</li>
           <li>입금 정산이 끝난 날은 검은 테두리로 표시됩니다. (설정에서 끌 수 있어요)</li>
         </ul>
       </details>
@@ -839,7 +842,7 @@ html.dark .rec-memo-toggle{color:#9be0bc}
           정산 완료 날짜 검은색 테두리
         </label>
       </section>
-      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.16-y<span id="viewInfo"></span></div>
+      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.16-z<span id="viewInfo"></span></div>
     </div>
   </div>
 </div>
@@ -985,6 +988,72 @@ function takeQuickMemo(){
   const h = $('quickMemoHint'); if(h) h.textContent = '';
   return v;
 }
+// ===== 공휴일 (양력 고정 + 음력[한국 달력] 계산 + 대체공휴일) =====
+const _holidayCache = {};
+const _tempHolidays = { '2025-01-27': '임시공휴일', '2025-06-03': '대선일', '2026-06-03': '지방선거일' };
+function holidayMap(year){
+  if(_holidayCache[year]) return _holidayCache[year];
+  const map = {};
+  const key = (y,m,d) => y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+  const keyOf = dt => key(dt.getFullYear(), dt.getMonth()+1, dt.getDate());
+  const add = (k, name, sub, block) => {
+    if(map[k]){ map[k].names.push(name); map[k].overlap = true; }
+    else map[k] = { names: [name], sub: !!sub, block: block || null, overlap: false };
+  };
+  // 양력 고정
+  [[1,1,'신정',0],[3,1,'삼일절',1],[5,5,'어린이날',1],[6,6,'현충일',0],[8,15,'광복절',1],[10,3,'개천절',1],[10,9,'한글날',1],[12,25,'성탄절',1]]
+    .forEach(([m,d,n,sub]) => add(key(year,m,d), n, sub));
+  // 음력 (한국 음력 달력 Intl 사용)
+  try{
+    const f = new Intl.DateTimeFormat('en-u-ca-dangi', { month:'numeric', day:'numeric' });
+    for(let dt = new Date(year,0,1,12); dt.getFullYear() === year; dt.setDate(dt.getDate()+1)){
+      const o = {}; f.formatToParts(dt).forEach(p => o[p.type] = p.value);
+      const m = o.month, d = +o.day;
+      if(m === '1' && d === 1){
+        const blk = 'seol';
+        const prev = new Date(dt); prev.setDate(prev.getDate()-1);
+        const next = new Date(dt); next.setDate(next.getDate()+1);
+        add(keyOf(prev), '설날 연휴', 1, blk); add(keyOf(dt), '설날', 1, blk); add(keyOf(next), '설날 연휴', 1, blk);
+      } else if(m === '8' && d === 15){
+        const blk = 'chu';
+        const prev = new Date(dt); prev.setDate(prev.getDate()-1);
+        const next = new Date(dt); next.setDate(next.getDate()+1);
+        add(keyOf(prev), '추석 연휴', 1, blk); add(keyOf(dt), '추석', 1, blk); add(keyOf(next), '추석 연휴', 1, blk);
+      } else if(m === '4' && d === 8){
+        add(keyOf(dt), '부처님오신날', 1);
+      }
+    }
+  }catch(e){}
+  // 임시공휴일(선거일 등)
+  Object.keys(_tempHolidays).forEach(k => { if(k.startsWith(year + '-')) add(k, _tempHolidays[k], 0); });
+  // 대체공휴일: 일요일(설·추석 연휴)/토·일(그 외)이거나 다른 공휴일과 겹치면 다음 첫 평일
+  const result = {};
+  Object.keys(map).forEach(k => { result[k] = map[k].names.join('·'); });
+  const isFree = dt => { const w = dt.getDay(); return w === 0 || w === 6 || result[keyOf(dt)]; };
+  const blocks = {};
+  Object.keys(map).sort().forEach(k => {
+    const h = map[k], dt = new Date(k + 'T12:00:00'), w = dt.getDay();
+    if(!h.sub) return;
+    if(h.block){
+      (blocks[h.block] = blocks[h.block] || { sunday:false, overlap:false, last:k }).last = k;
+      if(w === 0) blocks[h.block].sunday = true;
+      if(h.overlap) blocks[h.block].overlap = true;
+    } else if(w === 0 || w === 6 || h.overlap){
+      let n = new Date(dt); do { n.setDate(n.getDate()+1); } while(isFree(n));
+      result[keyOf(n)] = '대체공휴일';
+    }
+  });
+  Object.keys(blocks).forEach(b => {
+    if(blocks[b].sunday || blocks[b].overlap){
+      let n = new Date(blocks[b].last + 'T12:00:00'); do { n.setDate(n.getDate()+1); } while(isFree(n));
+      result[keyOf(n)] = '대체공휴일';
+    }
+  });
+  _holidayCache[year] = result;
+  return result;
+}
+function holidayName(dateStr){ return holidayMap(Number(dateStr.slice(0,4)))[dateStr] || ''; }
+
 function amount(r){ return (Number(r.rate) || 0) * (Number(r.units) || 0); }
 function totalPay(r){ return amount(r) + (Number(r.expense) || 0); }
 function sameSite(a,b){ return String(a||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('ko-KR') === String(b||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('ko-KR'); }
@@ -1043,7 +1112,9 @@ function render(){
     
     let el = document.createElement('div');
     el.className = cl;
-    el.innerHTML = `<div class="date">${d}</div>${entries}`;
+    const hname = holidayName(key);
+    if(hname) el.classList.add('holiday');
+    el.innerHTML = `<div class="date">${d}</div>${hname ? `<div class="hname" title="${hname}">${hname}</div>` : ''}${entries}`;
     el.addEventListener('click', e => {
       if(isSwiping) return;
       const recordId = e.target.closest('[data-record]')?.dataset.record;
