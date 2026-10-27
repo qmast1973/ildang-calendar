@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="app-version" content="2026.10.27-ac">
+  <meta name="app-version" content="2026.10.27-ad">
   <meta name="theme-color" content="#16764f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -417,6 +417,7 @@ html.dark .export-opts{border-color:#33433b}
           <li>설정 → <b>내보내기</b>에서 기간과 업체를 고르고, <b>텍스트 목록</b>(카카오톡·문자 전송용) 또는 <b>엑셀 CSV 파일</b>로 만들 수 있습니다.</li>
           <li><b>보낼 내용</b>에서 <b>리스트 + 합계</b>(날짜별 공수와 업체별 합계) 또는 <b>합계만</b>(업체별 일수·공수 합계만 간단히)을 고릅니다.</li>
           <li><b>📝 메모도 같이 보내기</b>를 체크하면 리스트의 각 날짜 뒤에 메모가 함께 나갑니다. (합계만 보낼 때는 메모가 들어가지 않습니다.) 선택한 항목은 기억됩니다.</li>
+          <li>내보내기를 열면 <b>시작일이 아직 정산(입금)되지 않은 가장 이른 날짜</b>로 자동 지정됩니다. 업체를 고르면 그 업체 기준으로 바뀌고, 직접 고친 날짜는 그대로 유지됩니다.</li>
         </ul>
       </details>
       <details><summary>💾 저장 · 백업 · 복원</summary>
@@ -852,7 +853,7 @@ html.dark .export-opts{border-color:#33433b}
           정산 완료 날짜 검은색 테두리
         </label>
       </section>
-      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.27-ac<span id="viewInfo"></span></div>
+      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.27-ad<span id="viewInfo"></span></div>
     </div>
   </div>
 </div>
@@ -1466,12 +1467,20 @@ function downloadJsonBackup(){
 $('directJsonDownloadBtn').onclick = downloadJsonBackup;
 
 // 내보내기 & 엑셀 CSV 생성
+// 아직 정산(입금 완료)되지 않은 가장 이른 날짜. 정산 안 된 기록이 없으면 가장 이른 기록 날짜
+let _exportStartEdited = false;
+function firstUnsettledDate(company){
+  const rs = records.filter(r => !company || exportSiteOf(r) === company);
+  const unpaid = rs.filter(r => !r.paid && !isDayOff(r)).map(r => r.date).sort()[0];
+  return unpaid || rs.map(r => r.date).sort()[0] || records.map(r => r.date).sort()[0] || selectedDate;
+}
 function syncExportOpts(){
   const sum = (document.querySelector('input[name="exportScope"]:checked') || {}).value === 'sum';
   $('includeMemo').disabled = sum;
   $('includeMemoWrap').classList.toggle('off', sum);
 }
 document.querySelectorAll('input[name="exportScope"]').forEach(r => r.addEventListener('change', syncExportOpts));
+$('exportStart').addEventListener('input', () => { _exportStartEdited = true; });
 function openExport(){
   try {
     const o = JSON.parse(localStorage.getItem('ildang_export_opts') || '{}');
@@ -1479,8 +1488,8 @@ function openExport(){
     $('includeMemo').checked = !!o.memo;
   } catch(e) {}
   syncExportOpts();
-  let first = records.map(r => r.date).sort()[0] || selectedDate;
-  $('exportStart').value = first;
+  _exportStartEdited = false;
+  $('exportStart').value = firstUnsettledDate($('exportCompany').value);
   $('exportEnd').value = iso(new Date());
   $('exportSheet').classList.add('open');
 }
@@ -1804,6 +1813,7 @@ document.addEventListener('click', e => {
   if(b){
     const site = b.dataset.selSite;
     $('exportCompany').value = site;
+    if(!_exportStartEdited) $('exportStart').value = firstUnsettledDate(site);
     $('exportCompanyButton').textContent = (site || '전체 업체') + ' ›';
     $('exportCompanySheet').classList.remove('open');
   }
