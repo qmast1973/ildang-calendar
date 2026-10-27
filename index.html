@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="app-version" content="2026.10.27-ad">
+  <meta name="app-version" content="2026.10.27-ae">
   <meta name="theme-color" content="#16764f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -407,6 +407,7 @@ html.dark .export-opts{border-color:#33433b}
       <details><summary>💰 월별 정산 · 입금 관리</summary>
         <ul>
           <li>설정 → <b>월별 업체 정산 및 입금 관리</b>에서 월과 업체를 고르면 누적 공수, 일당 합계, 경비, 세금, 최종 수령액이 계산됩니다.</li>
+          <li>정산 창을 열면 <b>아직 정산되지 않은 가장 이른 달</b>이 자동으로 선택됩니다. 업체를 고르면 그 업체 기준으로 바뀌고, 달을 직접 고르면 그대로 유지됩니다.</li>
           <li>세금은 <b>3.3% 공제</b> 또는 <b>공제 없음</b>을 고를 수 있습니다.</li>
           <li>업체별로 한 달 치를 <b>전체 입금 완료</b> 또는 <b>미지급</b>으로 한꺼번에 바꿀 수 있습니다.</li>
           <li>홈 화면의 “이번 달 미수금”은 아직 입금되지 않은 금액의 합계입니다.</li>
@@ -853,7 +854,7 @@ html.dark .export-opts{border-color:#33433b}
           정산 완료 날짜 검은색 테두리
         </label>
       </section>
-      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.27-ad<span id="viewInfo"></span></div>
+      <div style="text-align:center;color:#4b5651;font-weight:700;font-size:calc(15px * var(--fs,1));">앱 버전 2026.10.27-ae<span id="viewInfo"></span></div>
     </div>
   </div>
 </div>
@@ -1346,16 +1347,20 @@ function batchSetPaidStatus(monthVal, siteVal, paidStatus) {
 }
 
 // 월별 업체 정산 & 입금 관리
+// 아직 정산(입금 완료)되지 않은 가장 이른 달(YYYY-MM). 없으면 이번 달
+let _settleMonthEdited = false;
+function firstUnsettledMonth(company){
+  const d = records.filter(r => !r.paid && !isDayOff(r) && (!company || r.site === company)).map(r => r.date).sort()[0];
+  if(d) return d.slice(0, 7);
+  const t0 = new Date();
+  return `${t0.getFullYear()}-${String(t0.getMonth() + 1).padStart(2, '0')}`;
+}
 $('openSettlementBtn').onclick = () => {
   const sm = $('settlementMonth');
-  if (!sm.value) {
-    const today = new Date();
-    const y = today.getFullYear();
-    const m = String(today.getMonth() + 1).padStart(2, '0');
-    sm.value = `${y}-${m}`;
-  }
+  _settleMonthEdited = false;
   const uniqueSites = [...new Set(records.filter(r => r.site !== '휴무').map(r => r.site))].sort();
   $('settlementCompany').innerHTML = '<option value="">전체 업체 (통합)</option>' + uniqueSites.map(site => `<option value="${escapeHtml(site)}">${escapeHtml(site)}</option>`).join('');
+  sm.value = firstUnsettledMonth($('settlementCompany').value);
   updateSettlementResult();
   $('settlementSheet').classList.add('open');
 };
@@ -1363,8 +1368,12 @@ $('openSettlementBtn').onclick = () => {
 $('settlementCloseBtn').onclick = () => $('settlementSheet').classList.remove('open');
 $('settlementXBtn').onclick = () => $('settlementSheet').classList.remove('open');
 $('settlementSheet').onclick = (e) => { if(e.target === $('settlementSheet')) $('settlementSheet').classList.remove('open'); };
+$('settlementMonth').addEventListener('change', () => { _settleMonthEdited = true; });
 $('settlementMonth').onchange = updateSettlementResult;
-$('settlementCompany').onchange = updateSettlementResult;
+$('settlementCompany').onchange = () => {
+  if(!_settleMonthEdited) $('settlementMonth').value = firstUnsettledMonth($('settlementCompany').value);
+  updateSettlementResult();
+};
 $('settlementTaxType').onchange = updateSettlementResult;
 
 function updateSettlementResult() {
